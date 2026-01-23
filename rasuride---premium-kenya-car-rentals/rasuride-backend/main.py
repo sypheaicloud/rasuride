@@ -29,7 +29,7 @@ if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
 
 # 3. Connect to Database (NO TRY-EXCEPT BLOCK)
 # We removed the try/except block so that if this fails, Render will show the REAL error in the logs.
-print(f"Attempting to connect to database...") 
+print(f"Attempting to connect to database URL: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'LOCAL'}...") 
 engine = create_engine(DATABASE_URL)
 print("✅ Database connection object created successfully.")
 
