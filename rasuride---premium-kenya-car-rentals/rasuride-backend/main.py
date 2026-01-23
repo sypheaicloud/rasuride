@@ -19,20 +19,19 @@ if not os.path.exists(UPLOAD_DIR):
 
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
-# --- 🔌 DATABASE CONNECTION (FIXED FOR CLOUD) ---
-# This line checks for the 'DATABASE_URL' environment variable in Render.
-# If it doesn't exist (like on your laptop), it falls back to your local postgresql address.
+# --- 🔌 DATABASE CONNECTION ---
+# 1. Get the URL (Cloud or Local)
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password123@localhost:5432/rasuride_db")
 
-# SQLAlchemy requires "postgresql://" but some cloud providers give "postgres://"
+# 2. Fix URL format if needed (Postgres requires 'postgresql://', not 'postgres://')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-try:
-    engine = create_engine(DATABASE_URL)
-    print("✅ Database connection object created successfully.")
-except Exception as e:
-    print(f"❌ Error creating engine: {e}")
+# 3. Connect to Database (NO TRY-EXCEPT BLOCK)
+# We removed the try/except block so that if this fails, Render will show the REAL error in the logs.
+print(f"Attempting to connect to database...") 
+engine = create_engine(DATABASE_URL)
+print("✅ Database connection object created successfully.")
 
 # --- 🌍 CORS (ALLOW EVERYONE) ---
 app.add_middleware(
@@ -161,7 +160,8 @@ def get_cars(start_date: str = Query(None), end_date: str = Query(None)):
             return cars_list
     except Exception as e:
         print(f"❌ Error: {str(e)}")
-        return {"error": str(e)}
+        # Return empty list instead of error object to prevent frontend crash
+        return []
 
 @app.delete("/cars/{car_id}")
 def delete_car(car_id: int):
