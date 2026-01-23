@@ -19,8 +19,14 @@ if not os.path.exists(UPLOAD_DIR):
 
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
-# --- DATABASE CONNECTION ---
-DATABASE_URL = "postgresql://postgres:password123@localhost:5432/rasuride_db"
+# --- 🔌 DATABASE CONNECTION (FIXED FOR CLOUD) ---
+# This line checks for the 'DATABASE_URL' environment variable in Render.
+# If it doesn't exist (like on your laptop), it falls back to your local postgresql address.
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password123@localhost:5432/rasuride_db")
+
+# SQLAlchemy requires "postgresql://" but some cloud providers give "postgres://"
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 try:
     engine = create_engine(DATABASE_URL)
@@ -28,13 +34,13 @@ try:
 except Exception as e:
     print(f"❌ Error creating engine: {e}")
 
-# --- CORS ---
+# --- 🌍 CORS (ALLOW EVERYONE) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["*"],   # Allows ALL domains (Laptop, Phone, Public Internet)
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],   # Allows ALL methods (GET, POST, DELETE, etc.)
+    allow_headers=["*"],   # Allows ALL headers
 )
 
 # --- SECURITY SETUP ---
@@ -103,7 +109,8 @@ async def add_car_with_upload(
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(image.file, buffer)
         
-        image_url = f"http://localhost:8000/uploads/{image.filename}"
+        # Use relative path or update domain dynamically in production
+        image_url = f"/uploads/{image.filename}" 
         
         with engine.connect() as conn:
             query = text("""
