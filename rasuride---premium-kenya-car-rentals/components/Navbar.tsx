@@ -8,116 +8,98 @@ interface NavbarProps {
   onOpenAdmin: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onOpenAuth, onOpenBookings, onOpenAdmin }) => {
+export default function Navbar({ user, onLogout, onOpenAuth, onOpenBookings, onOpenAdmin }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-slate-900/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
-      <div className="container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between h-20">
-          
-          {/* LOGO */}
-          <div className="flex items-center gap-2 min-w-[150px]">
-            <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
-              <span className="text-slate-900 font-bold text-xl">R</span>
-            </div>
-            <span className="text-2xl font-bold text-white tracking-tight">Rasu<span className="text-amber-500">Ride</span></span>
-          </div>
-
-          {/* 🛠️ SYPHE IT BRANDING (Center - Hidden on small mobile) */}
-          <div className="hidden lg:flex items-center justify-center flex-1">
-             <div className="group relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-amber-700 rounded-full opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                <p className="relative text-[9px] uppercase tracking-[0.4em] text-slate-400 font-bold px-6 py-2 rounded-full border border-white/5 bg-slate-900/50 backdrop-blur-sm">
-                   Web App Created by <span className="text-amber-500">Syphe IT</span>
-                </p>
-             </div>
-          </div>
-
-          {/* DESKTOP MENU */}
-          <div className="hidden md:flex items-center gap-8 min-w-[150px] justify-end">
-            <a href="#fleet" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Fleet</a>
-            
-            {user ? (
-              <div className="flex items-center gap-4">
-                <span className="text-white text-sm hidden lg:inline">Hi, <span className="font-bold text-amber-500">{user.name}</span></span>
-                
-                {user.is_admin && (
-                  <button 
-                    onClick={onOpenAdmin} 
-                    className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3 py-1 rounded-md text-xs font-black hover:bg-amber-500 hover:text-slate-900 transition-all"
-                  >
-                    ADMIN
-                  </button>
-                )}
-
-                <button onClick={onOpenBookings} className="text-sm text-slate-300 hover:text-white transition-colors">Bookings</button>
-                <button onClick={onLogout} className="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors">Logout</button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-4">
-                <button onClick={() => onOpenAuth('login')} className="text-slate-300 hover:text-white font-medium text-sm transition-colors">Log In</button>
-                <button onClick={() => onOpenAuth('signup')} className="bg-white text-slate-900 px-5 py-2.5 rounded-full font-bold text-sm hover:bg-slate-200 transition-all shadow-lg">Sign Up</button>
-              </div>
-            )}
-          </div>
-
-          {/* MOBILE MENU BUTTON */}
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-white p-2 hover:bg-slate-800 rounded-lg focus:outline-none"
-          >
-            {isMobileMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-            )}
-          </button>
+    <nav className="bg-slate-950/90 backdrop-blur-md border-b border-white/10 sticky top-0 z-50 h-24 md:h-20 transition-all">
+      <div className="container mx-auto px-8 md:px-16 lg:px-24 h-full flex items-center justify-between">
+        
+        {/* 1. LOGO & BRANDING */}
+        <div className="flex items-center gap-3 cursor-pointer py-2" onClick={() => window.scrollTo(0,0)}>
+           <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center font-black text-slate-900 text-xl shadow-lg shadow-amber-500/20">
+             R
+           </div>
+           <div className="flex flex-col justify-center">
+             <h1 className="text-lg font-black text-white leading-none tracking-tight">Raglenn</h1>
+             <h1 className="text-lg font-black text-white leading-none tracking-tight">Enterprises</h1>
+           </div>
         </div>
 
-        {/* MOBILE MENU DROPDOWN */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-slate-900 border-t border-slate-800 py-4 pb-6 px-2 space-y-2">
-            {/* Branding for Mobile Dropdown */}
-            <div className="px-4 py-2 mb-2">
-              <p className="text-[8px] uppercase tracking-[0.2em] text-slate-500">Created by Syphe IT</p>
+        {/* 2. CENTER LINKS (Desktop) */}
+        <div className="hidden lg:flex items-center gap-8">
+           <a href="#" className="text-sm font-bold text-white hover:text-amber-500 transition-colors">Home</a>
+           <a href="#fleet" className="text-sm font-bold text-slate-400 hover:text-amber-500 transition-colors">Fleet</a>
+           
+           {/* 📞 CONTACT MANAGER ALICE */}
+           <div className="flex items-center gap-3 pl-8 border-l border-white/10">
+              <div className="text-right">
+                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Manager Alice</p>
+                 <a href="tel:0723366873" className="text-amber-500 font-black text-sm hover:text-white transition-colors">
+                   0723 366 873
+                 </a>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-amber-500">
+                📞
+              </div>
+           </div>
+        </div>
+
+        {/* 3. RIGHT SIDE: AUTH + SYPHEIT CREDIT */}
+        <div className="flex flex-col items-end justify-center">
+            <div className="flex items-center gap-4">
+               {user ? (
+                 <div className="flex items-center gap-6">
+                   <div className="text-right hidden sm:block">
+                     <p className="text-xs text-slate-400">Welcome,</p>
+                     <p className="text-sm font-bold text-white">{user.name?.split(' ')[0]}</p>
+                   </div>
+                   <div className="flex items-center gap-4">
+                     <button onClick={onOpenBookings} className="hidden md:block text-sm font-bold text-slate-300 hover:text-white transition-colors">My Bookings</button>
+                     {user.is_admin && (
+                       <button onClick={onOpenAdmin} className="p-2 text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg transition-all" title="Admin Dashboard">⚡</button>
+                     )}
+                     <button onClick={onLogout} className="hidden md:block px-4 py-2 text-xs font-bold text-red-500 border border-red-500/30 rounded-lg hover:bg-red-500 hover:text-white transition-all">Logout</button>
+                   </div>
+                 </div>
+               ) : (
+                 <div className="hidden md:flex items-center gap-3">
+                   <button onClick={() => onOpenAuth('login')} className="text-sm font-bold text-slate-300 hover:text-white px-3 py-2">Log In</button>
+                   <button onClick={() => onOpenAuth('signup')} className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-black uppercase tracking-wider rounded-lg transition-all shadow-lg shadow-amber-500/20">Sign Up</button>
+                 </div>
+               )}
+               {/* Mobile Toggle */}
+               <button className="lg:hidden text-2xl text-white ml-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>{isMobileMenuOpen ? '✕' : '☰'}</button>
             </div>
 
-            <a href="#fleet" className="block px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">Fleet</a>
-            
-            {user ? (
-              <>
-                <div className="px-4 py-3 text-amber-500 font-bold border-t border-slate-800 mt-2">
-                  Welcome, {user.name}
-                </div>
+            {/* 💻 SYPHEIT CREDIT (Placed under buttons) */}
+            <div className="hidden md:block mt-1">
+                <p className="text-[9px] font-bold text-slate-400 hover:text-white cursor-default transition-colors uppercase tracking-widest">
+                    Powered by SypheIT Services
+                </p>
+            </div>
+        </div>
 
-                {user.is_admin && (
-                  <button 
-                    onClick={() => { onOpenAdmin(); setIsMobileMenuOpen(false); }} 
-                    className="block w-full text-left px-4 py-3 text-amber-500 font-bold bg-amber-500/5 rounded-lg border border-amber-500/10"
-                  >
-                    🚀 Admin Dashboard
-                  </button>
-                )}
-
-                <button onClick={() => { onOpenBookings(); setIsMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
-                  My Bookings
-                </button>
-                <button onClick={() => { onLogout(); setIsMobileMenuOpen(false); }} className="block w-full text-left px-4 py-3 text-red-400 hover:bg-slate-800 hover:text-red-300 rounded-lg transition-colors">
-                  Logout
-                </button>
-              </>
-            ) : (
-              <div className="grid grid-cols-2 gap-4 px-4 mt-4 pt-4 border-t border-slate-800">
-                <button onClick={() => { onOpenAuth('login'); setIsMobileMenuOpen(false); }} className="py-3 text-center text-slate-300 hover:text-white font-bold bg-slate-800 rounded-xl transition-colors">Log In</button>
-                <button onClick={() => { onOpenAuth('signup'); setIsMobileMenuOpen(false); }} className="py-3 text-center bg-amber-500 text-slate-900 font-bold rounded-xl hover:bg-amber-400 transition-colors">Sign Up</button>
-              </div>
-            )}
-          </div>
-        )}
       </div>
+
+      {isMobileMenuOpen && (
+        <div className="lg:hidden bg-slate-950 border-t border-white/10 p-6 absolute w-full left-0 top-20 flex flex-col gap-4 shadow-2xl z-50">
+           <a href="#" className="text-slate-300 font-bold py-3 border-b border-white/5">Home</a>
+           <a href="#fleet" className="text-slate-300 font-bold py-3 border-b border-white/5">Our Fleet</a>
+           {user && (<><button onClick={onOpenBookings} className="text-left text-slate-300 font-bold py-3 border-b border-white/5">My Bookings</button><button onClick={onLogout} className="text-left text-red-500 font-bold py-3 border-b border-white/5">Logout</button></>)}
+           <div className="bg-slate-900 p-4 rounded-xl flex items-center gap-4 mt-2 border border-slate-800">
+              <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 text-xl">📞</div>
+              <div><p className="text-[10px] text-slate-400 font-bold uppercase">Call Manager Alice</p><a href="tel:0723366873" className="text-white font-black text-lg">0723 366 873</a></div>
+           </div>
+           
+           {/* Mobile Credit */}
+           <div className="text-center mt-4">
+             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Powered by SypheIT Services</p>
+           </div>
+
+           {!user && (<div className="grid grid-cols-2 gap-4 mt-2"><button onClick={() => { onOpenAuth('login'); setIsMobileMenuOpen(false); }} className="py-3 bg-slate-800 text-white font-bold rounded-lg">Log In</button><button onClick={() => { onOpenAuth('signup'); setIsMobileMenuOpen(false); }} className="py-3 bg-amber-500 text-slate-900 font-bold rounded-lg">Sign Up</button></div>)}
+        </div>
+      )}
     </nav>
   );
-};
-
-export default Navbar;
+}

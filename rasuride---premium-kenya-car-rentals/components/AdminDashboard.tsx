@@ -3,7 +3,7 @@ import { getApiUrl } from '../config';
 import AddCarModal from './AddCarModal';
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'bookings' | 'users' | 'fleet'>('users'); // Start on Users for now
+  const [activeTab, setActiveTab] = useState<'bookings' | 'users' | 'fleet'>('users'); 
   
   const [bookings, setBookings] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
@@ -11,6 +11,10 @@ const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({ total_revenue: 0, total_cars: 0, active_cars: 0 });
   const [loading, setLoading] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // --- 💰 PRICE EDITING STATE (Restored) ---
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [tempPrice, setTempPrice] = useState<number | string>("");
 
   // --- FETCH DATA ---
   const fetchData = async () => {
@@ -39,11 +43,10 @@ const AdminDashboard: React.FC = () => {
 
   // --- ACTIONS ---
 
-  // 🔴 1. BAN USER TOGGLE
+  // 1. BAN USER TOGGLE
   const handleBanUser = async (userId: number, currentBanStatus: boolean) => {
     const newStatus = !currentBanStatus;
     const action = newStatus ? "BAN" : "UNBAN";
-    
     if (!window.confirm(`Are you sure you want to ${action} this user?`)) return;
 
     try {
@@ -56,10 +59,9 @@ const AdminDashboard: React.FC = () => {
     } catch (e) { alert("Action failed"); }
   };
 
-  // 🔴 2. DELETE USER PERMANENTLY
+  // 2. DELETE USER PERMANENTLY
   const handleDeleteUser = async (userId: number) => {
     if (!window.confirm("⚠️ DANGER: This will delete the user AND ALL THEIR BOOKING HISTORY.\n\nContinue?")) return;
-
     try {
       const res = await fetch(`${getApiUrl()}/users/${userId}`, { method: 'DELETE' });
       if (res.ok) {
@@ -69,19 +71,42 @@ const AdminDashboard: React.FC = () => {
     } catch (e) { alert("Delete failed"); }
   };
 
-  // ... (Existing car/booking actions) ...
+  // 3. BOOKING ACTIONS
   const handleCancelBooking = async (id: number) => {
     if (!window.confirm("Cancel this booking?")) return;
     try { await fetch(`${getApiUrl()}/bookings/${id}`, { method: 'DELETE' }); fetchData(); } catch (err) { alert("Error"); }
   };
+
+  // 4. CAR STATUS (Updated to 'At Shop')
   const handleToggleStatus = async (id: number, currentStatus: boolean) => {
-    try { await fetch(`${getApiUrl()}/cars/${id}/status`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ is_active: !currentStatus }) }); fetchData(); } catch (e) { alert("Error"); }
+    try { 
+        await fetch(`${getApiUrl()}/cars/${id}/status`, { 
+            method: 'PATCH', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ is_active: !currentStatus }) 
+        }); 
+        fetchData(); 
+    } catch (e) { alert("Error"); }
   };
-  const handleEditPrice = async (id: number) => {
-    const newPrice = window.prompt("New Price:");
-    if (!newPrice) return;
-    await fetch(`${getApiUrl()}/cars/${id}/price`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ new_price: parseInt(newPrice) }) }); fetchData();
+
+  // 5. PRICE EDITING (Restored Logic)
+  const startEditing = (car: any) => {
+    setEditingId(car.id);
+    setTempPrice(car.price || car.price_per_day);
   };
+
+  const savePrice = async (id: number) => {
+    try {
+        await fetch(`${getApiUrl()}/cars/${id}/price`, { 
+            method: 'PATCH', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ new_price: parseInt(tempPrice.toString()) }) 
+        }); 
+        setEditingId(null);
+        fetchData();
+    } catch (e) { alert("Error saving price"); }
+  };
+
   const handleDeleteCar = async (id: number) => {
     if (!window.confirm("Delete Car?")) return;
     await fetch(`${getApiUrl()}/cars/${id}`, { method: 'DELETE' }); fetchData();
@@ -101,6 +126,7 @@ const AdminDashboard: React.FC = () => {
           <button onClick={fetchData} className="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all">Refresh Data</button>
         </header>
 
+        {/* STATS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <div className="bg-slate-900 p-6 rounded-3xl border border-amber-500/20 shadow-xl shadow-amber-500/5">
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Total Revenue</p>
@@ -112,6 +138,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
         
+        {/* TABS */}
         <div className="flex gap-2 mb-8 bg-slate-900/50 p-1.5 rounded-2xl w-fit border border-white/5">
           {['fleet', 'bookings', 'users'].map((tab: any) => (
             <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-2.5 rounded-xl font-bold uppercase text-xs tracking-widest transition-all ${activeTab === tab ? 'bg-amber-500 text-slate-900 shadow-lg' : 'text-slate-400 hover:text-white'}`}>
@@ -125,7 +152,7 @@ const AdminDashboard: React.FC = () => {
             <div className="p-20 text-center text-slate-500 animate-pulse font-bold uppercase tracking-widest">Loading...</div>
           ) : (
             <>
-              {/* FLEET TAB */}
+              {/* --- 🚗 FLEET TAB --- */}
               {activeTab === 'fleet' && (
                 <div className="p-8">
                   <div className="flex justify-between items-center mb-8">
@@ -135,20 +162,48 @@ const AdminDashboard: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {cars.map((car: any) => (
                       <div key={car.id} className={`group relative bg-slate-950 rounded-2xl border transition-all ${car.active ? 'border-white/5' : 'border-red-500/30 opacity-70'}`}>
+                        
+                        {/* DELETE BTN */}
                         <button onClick={() => handleDeleteCar(car.id)} className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition-all">🗑️</button>
+                        
+                        {/* IMAGE */}
                         <div className="relative h-36 overflow-hidden rounded-t-2xl bg-black">
                           <img src={car.image && car.image.startsWith('/uploads') ? `${getApiUrl()}${car.image}` : (car.image || '/range.png')} className={`w-full h-full object-cover transition-opacity ${car.active ? 'opacity-100' : 'opacity-40 grayscale'}`} alt={car.model} />
                         </div>
+                        
+                        {/* CONTENT */}
                         <div className="p-4">
                           <div className="mb-3">
                             <p className="text-amber-500 text-[10px] font-bold uppercase">{car.make}</p>
                             <p className="text-white font-bold text-sm truncate">{car.model}</p>
                           </div>
+
                           <div className="flex flex-col gap-2 border-t border-white/5 pt-3">
-                            <button onClick={() => handleToggleStatus(car.id, car.active)} className={`w-full text-[10px] font-black px-3 py-2 rounded-lg border flex items-center justify-center gap-2 transition-all ${car.active ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-red-500/10 border-red-500/30 text-red-500'}`}>
-                                {car.active ? 'ONLINE' : 'OFFLINE'}
+                            
+                            {/* 1. STATUS BUTTON (FIXED: AT SHOP) */}
+                            <button onClick={() => handleToggleStatus(car.id, car.active)} className={`w-full text-[10px] font-black px-3 py-2 rounded-lg border flex items-center justify-center gap-2 transition-all ${car.active ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-slate-700/50 border-slate-600 text-slate-400'}`}>
+                                {car.active ? '● ONLINE' : '○ AT SHOP'}
                             </button>
-                            <button onClick={() => handleEditPrice(car.id)} className="text-slate-400 hover:text-white text-[10px] uppercase font-bold text-center w-full py-1">Edit Price: KES {car.price?.toLocaleString()}</button>
+
+                            {/* 2. PRICE EDITING (RESTORED) */}
+                            {editingId === car.id ? (
+                                <div className="flex gap-1 items-center bg-slate-800 p-1 rounded-lg">
+                                    <input 
+                                        type="number" 
+                                        value={tempPrice} 
+                                        onChange={(e) => setTempPrice(e.target.value)}
+                                        className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-amber-500"
+                                    />
+                                    <button onClick={() => savePrice(car.id)} className="text-green-500 hover:bg-green-500/20 p-1 rounded">✓</button>
+                                    <button onClick={() => setEditingId(null)} className="text-red-500 hover:bg-red-500/20 p-1 rounded">✕</button>
+                                </div>
+                            ) : (
+                                <button onClick={() => startEditing(car)} className="group/edit flex justify-center items-center w-full py-1 text-slate-400 hover:text-white text-[10px] uppercase font-bold transition-colors">
+                                    <span className="mr-2">KES {car.price?.toLocaleString()}</span>
+                                    <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity">✎</span>
+                                </button>
+                            )}
+
                           </div>
                         </div>
                       </div>
@@ -157,7 +212,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
               )}
 
-              {/* BOOKINGS TAB */}
+              {/* --- 📅 BOOKINGS TAB --- */}
               {activeTab === 'bookings' && (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
@@ -181,17 +236,13 @@ const AdminDashboard: React.FC = () => {
                 </div>
               )}
 
-              {/* 👥 USERS TAB (UPDATED) */}
+              {/* --- 👥 USERS TAB --- */}
               {activeTab === 'users' && (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead className="bg-slate-950 text-slate-500 font-bold uppercase text-[10px] tracking-widest">
                       <tr>
-                        <th className="p-4">ID</th>
-                        <th className="p-4">Name</th>
-                        <th className="p-4">Email</th>
-                        <th className="p-4">Status</th>
-                        <th className="p-4 text-right">Actions</th>
+                        <th className="p-4">ID</th><th className="p-4">Name</th><th className="p-4">Email</th><th className="p-4">Status</th><th className="p-4 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -204,32 +255,13 @@ const AdminDashboard: React.FC = () => {
                           </td>
                           <td className="p-4 text-slate-400">{u.email}</td>
                           <td className="p-4">
-                            {u.is_banned ? (
-                                <span className="bg-red-600/20 text-red-500 px-2 py-1 rounded text-[10px] font-bold uppercase border border-red-500/20">⛔ BANNED</span>
-                            ) : (
-                                <span className="bg-green-500/20 text-green-500 px-2 py-1 rounded text-[10px] font-bold uppercase border border-green-500/20">✔ ACTIVE</span>
-                            )}
+                            {u.is_banned ? <span className="bg-red-600/20 text-red-500 px-2 py-1 rounded text-[10px] font-bold uppercase border border-red-500/20">⛔ BANNED</span> : <span className="bg-green-500/20 text-green-500 px-2 py-1 rounded text-[10px] font-bold uppercase border border-green-500/20">✔ ACTIVE</span>}
                           </td>
                           <td className="p-4 text-right flex justify-end gap-2">
-                            {/* BAN BUTTON */}
-                            <button 
-                                onClick={() => handleBanUser(u.id, u.is_banned)}
-                                className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase border transition-all ${
-                                    u.is_banned 
-                                    ? 'border-green-500/30 text-green-500 hover:bg-green-500 hover:text-white' 
-                                    : 'border-yellow-500/30 text-yellow-500 hover:bg-yellow-500 hover:text-black'
-                                }`}
-                            >
+                            <button onClick={() => handleBanUser(u.id, u.is_banned)} className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase border transition-all ${u.is_banned ? 'border-green-500/30 text-green-500 hover:bg-green-500 hover:text-white' : 'border-yellow-500/30 text-yellow-500 hover:bg-yellow-500 hover:text-black'}`}>
                                 {u.is_banned ? "UNBAN" : "BAN"}
                             </button>
-
-                            {/* DELETE BUTTON */}
-                            <button 
-                                onClick={() => handleDeleteUser(u.id)}
-                                className="px-3 py-1.5 rounded text-[10px] font-bold uppercase border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all"
-                            >
-                                DELETE
-                            </button>
+                            <button onClick={() => handleDeleteUser(u.id)} className="px-3 py-1.5 rounded text-[10px] font-bold uppercase border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all">DELETE</button>
                           </td>
                         </tr>
                       ))}
