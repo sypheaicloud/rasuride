@@ -9,9 +9,12 @@ import AuthModal from './components/AuthModal';
 import GeminiAssistant from './components/GeminiAssistant';
 import Footer from './components/Footer';
 import { Car } from './types';
-import { getApiUrl } from './config'; 
+// import { getApiUrl } from './config';  <-- BYPASS CONFIG
 
 function App() {
+  // --- 1. FORCE BACKEND URL ---
+  const API_URL = "https://rasuride.onrender.com";
+
   const [cars, setCars] = useState<Car[]>([]);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [user, setUser] = useState<any>(null); // This holds your login state
@@ -22,7 +25,7 @@ function App() {
   const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
 
-  // --- 1. RESTORE SESSION (The Fix) ---
+  // --- 2. RESTORE SESSION ---
   useEffect(() => {
     // Check if user data exists in browser storage
     const storedUser = localStorage.getItem('user') || localStorage.getItem('userInfo');
@@ -31,27 +34,33 @@ function App() {
       try {
         const parsedUser = JSON.parse(storedUser);
         console.log("🔄 Session restored for:", parsedUser.email);
-        setUser(parsedUser); // <--- This logs you back in automatically!
+        setUser(parsedUser); // Logs you back in automatically!
       } catch (err) {
         console.error("Session restore failed:", err);
       }
     }
   }, []); // Runs once on page load
 
-  // --- 2. FETCH CARS ---
+  // --- 3. FETCH CARS (FIXED) ---
   const fetchCars = (startDate?: string, endDate?: string) => {
-    let url = `${getApiUrl()}/cars`;
+    // Use hardcoded API_URL here
+    let url = `${API_URL}/cars`;
     if (startDate && endDate) {
       url += `?start_date=${startDate}&end_date=${endDate}`;
     }
     
+    console.log("Fetching cars from:", url); // Debugging log
+
     fetch(url)
       .then(res => res.json())
-      .then(data => setCars(data))
+      .then(data => {
+        console.log("Cars loaded:", data); // Debugging log
+        setCars(data);
+      })
       .catch(err => console.error("Failed to load cars:", err));
   };
 
-  // --- 3. AUTO-REFRESH ON TAB FOCUS ---
+  // --- 4. AUTO-REFRESH ON TAB FOCUS ---
   useEffect(() => {
     fetchCars(); // Initial load
 
@@ -64,7 +73,7 @@ function App() {
     return () => window.removeEventListener("focus", onFocus);
   }, []);
 
-  // --- 4. HANDLE LOGIN ---
+  // --- 5. HANDLE LOGIN ---
   const handleLoginSuccess = (userData: any) => {
     // Save to storage so we don't lose it on refresh
     localStorage.setItem('user', JSON.stringify(userData)); 
@@ -143,7 +152,7 @@ function App() {
         <BookingModal 
           car={selectedCar} 
           onClose={() => setSelectedCar(null)} 
-          user={user} // 👈 PASSING THE USER PROP HERE
+          user={user} 
         />
       )}
 
