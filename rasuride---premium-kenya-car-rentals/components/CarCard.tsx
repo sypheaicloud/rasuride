@@ -1,6 +1,6 @@
 import React from 'react';
 import { Car } from '../types';
-import { getApiUrl } from '../config'; // Import your backend URL helper
+// import { getApiUrl } from '../config'; // We are bypassing the config to force the fix
 
 interface CarCardProps {
   car: Car;
@@ -9,8 +9,9 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
   
-  // 1. Get the Backend URL (https://rasuride.onrender.com)
-  const apiUrl = getApiUrl();
+  // 1. FORCE the website to look at Render. 
+  // We hardcode this to ensure it doesn't default to "localhost" or empty.
+  const apiUrl = "https://rasuride.onrender.com";
 
   // 2. Logic to build the correct image link
   const rawImage = car.image || car.image_url;
@@ -18,10 +19,11 @@ const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
 
   if (rawImage) {
     if (rawImage.startsWith("http")) {
-      // If it's already a full link (like from Google), use it as is
+      // If it's already a full link (like from Google or Placehold.co), use it as is
       imageSource = rawImage;
     } else {
-      // If it's a relative path (like /uploads/car.jpg), add the Backend URL to the front
+      // If it's a relative path (like /uploads/car.jpg), add the Render URL to the front
+      // Result: https://rasuride.onrender.com/uploads/car.jpg
       imageSource = `${apiUrl}${rawImage}`;
     }
   }
