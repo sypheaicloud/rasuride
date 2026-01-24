@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getApiUrl } from '../config';
+// import { getApiUrl } from '../config'; // Bypass config
 import AddCarModal from './AddCarModal';
 
 const AdminDashboard: React.FC = () => {
+  // --- 1. FORCE BACKEND URL ---
+  const API_URL = "https://rasuride.onrender.com";
+
   const [activeTab, setActiveTab] = useState<'bookings' | 'users' | 'fleet'>('users'); 
   
   const [bookings, setBookings] = useState<any[]>([]);
@@ -12,7 +15,7 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  // --- 💰 PRICE EDITING STATE (Restored) ---
+  // --- 💰 PRICE EDITING STATE ---
   const [editingId, setEditingId] = useState<number | null>(null);
   const [tempPrice, setTempPrice] = useState<number | string>("");
 
@@ -20,7 +23,8 @@ const AdminDashboard: React.FC = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const statsRes = await fetch(`${getApiUrl()}/admin/stats`);
+      // Use hardcoded API_URL
+      const statsRes = await fetch(`${API_URL}/admin/stats`);
       const statsData = await statsRes.json();
       setStats(statsData);
 
@@ -28,7 +32,7 @@ const AdminDashboard: React.FC = () => {
       if (activeTab === 'users') path = '/admin/users';
       if (activeTab === 'fleet') path = '/admin/cars';
 
-      const res = await fetch(`${getApiUrl()}${path}`);
+      const res = await fetch(`${API_URL}${path}`);
       const data = await res.json();
       
       if (activeTab === 'bookings') setBookings(data);
@@ -50,7 +54,7 @@ const AdminDashboard: React.FC = () => {
     if (!window.confirm(`Are you sure you want to ${action} this user?`)) return;
 
     try {
-      await fetch(`${getApiUrl()}/users/${userId}/ban`, {
+      await fetch(`${API_URL}/users/${userId}/ban`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_banned: newStatus }),
@@ -63,7 +67,7 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteUser = async (userId: number) => {
     if (!window.confirm("⚠️ DANGER: This will delete the user AND ALL THEIR BOOKING HISTORY.\n\nContinue?")) return;
     try {
-      const res = await fetch(`${getApiUrl()}/users/${userId}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}/users/${userId}`, { method: 'DELETE' });
       if (res.ok) {
         alert("User deleted.");
         fetchData();
@@ -74,13 +78,13 @@ const AdminDashboard: React.FC = () => {
   // 3. BOOKING ACTIONS
   const handleCancelBooking = async (id: number) => {
     if (!window.confirm("Cancel this booking?")) return;
-    try { await fetch(`${getApiUrl()}/bookings/${id}`, { method: 'DELETE' }); fetchData(); } catch (err) { alert("Error"); }
+    try { await fetch(`${API_URL}/bookings/${id}`, { method: 'DELETE' }); fetchData(); } catch (err) { alert("Error"); }
   };
 
-  // 4. CAR STATUS (Updated to 'At Shop')
+  // 4. CAR STATUS
   const handleToggleStatus = async (id: number, currentStatus: boolean) => {
     try { 
-        await fetch(`${getApiUrl()}/cars/${id}/status`, { 
+        await fetch(`${API_URL}/cars/${id}/status`, { 
             method: 'PATCH', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ is_active: !currentStatus }) 
@@ -89,7 +93,7 @@ const AdminDashboard: React.FC = () => {
     } catch (e) { alert("Error"); }
   };
 
-  // 5. PRICE EDITING (Restored Logic)
+  // 5. PRICE EDITING
   const startEditing = (car: any) => {
     setEditingId(car.id);
     setTempPrice(car.price || car.price_per_day);
@@ -97,7 +101,7 @@ const AdminDashboard: React.FC = () => {
 
   const savePrice = async (id: number) => {
     try {
-        await fetch(`${getApiUrl()}/cars/${id}/price`, { 
+        await fetch(`${API_URL}/cars/${id}/price`, { 
             method: 'PATCH', 
             headers: { 'Content-Type': 'application/json' }, 
             body: JSON.stringify({ new_price: parseInt(tempPrice.toString()) }) 
@@ -109,7 +113,7 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteCar = async (id: number) => {
     if (!window.confirm("Delete Car?")) return;
-    await fetch(`${getApiUrl()}/cars/${id}`, { method: 'DELETE' }); fetchData();
+    await fetch(`${API_URL}/cars/${id}`, { method: 'DELETE' }); fetchData();
   };
 
   useEffect(() => { fetchData(); }, [activeTab]);
@@ -166,9 +170,18 @@ const AdminDashboard: React.FC = () => {
                         {/* DELETE BTN */}
                         <button onClick={() => handleDeleteCar(car.id)} className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition-all">🗑️</button>
                         
-                        {/* IMAGE */}
+                        {/* IMAGE - FIXED LOGIC */}
                         <div className="relative h-36 overflow-hidden rounded-t-2xl bg-black">
-                          <img src={car.image && car.image.startsWith('/uploads') ? `${getApiUrl()}${car.image}` : (car.image || '/range.png')} className={`w-full h-full object-cover transition-opacity ${car.active ? 'opacity-100' : 'opacity-40 grayscale'}`} alt={car.model} />
+                          <img 
+                            src={
+                                car.image 
+                                ? (car.image.startsWith('http') ? car.image : `${API_URL}${car.image}`) 
+                                : '/range.png'
+                            }
+                            className={`w-full h-full object-cover transition-opacity ${car.active ? 'opacity-100' : 'opacity-40 grayscale'}`} 
+                            alt={car.model} 
+                            onError={(e) => { (e.target as HTMLImageElement).src = "https://placehold.co/600x400/1e293b/white?text=No+Image"; }}
+                          />
                         </div>
                         
                         {/* CONTENT */}
@@ -180,12 +193,12 @@ const AdminDashboard: React.FC = () => {
 
                           <div className="flex flex-col gap-2 border-t border-white/5 pt-3">
                             
-                            {/* 1. STATUS BUTTON (FIXED: AT SHOP) */}
+                            {/* 1. STATUS BUTTON */}
                             <button onClick={() => handleToggleStatus(car.id, car.active)} className={`w-full text-[10px] font-black px-3 py-2 rounded-lg border flex items-center justify-center gap-2 transition-all ${car.active ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-slate-700/50 border-slate-600 text-slate-400'}`}>
                                 {car.active ? '● ONLINE' : '○ AT SHOP'}
                             </button>
 
-                            {/* 2. PRICE EDITING (RESTORED) */}
+                            {/* 2. PRICE EDITING */}
                             {editingId === car.id ? (
                                 <div className="flex gap-1 items-center bg-slate-800 p-1 rounded-lg">
                                     <input 
