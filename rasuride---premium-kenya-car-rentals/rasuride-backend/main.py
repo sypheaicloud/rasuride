@@ -13,22 +13,22 @@ from datetime import datetime
 app = FastAPI()
 
 # --- 📁 IMAGE UPLOAD SETUP ---
-UPLOAD_DIR = "uploads"
+# Use absolute pathing to ensure Render finds the directory correctly
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
+# Mount static files BEFORE middleware to ensure fast response
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # --- 🔌 DATABASE CONNECTION ---
-# 1. Get the URL (Cloud or Local)
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password123@localhost:5432/rasuride_db")
 
-# 2. Fix URL format if needed (Postgres requires 'postgresql://', not 'postgres://')
 if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# 3. Connect to Database (NO TRY-EXCEPT BLOCK)
-# We removed the try/except block so that if this fails, Render will show the REAL error in the logs.
 print(f"Attempting to connect to database URL: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'LOCAL'}...") 
 engine = create_engine(DATABASE_URL)
 print("✅ Database connection object created successfully.")
@@ -36,10 +36,10 @@ print("✅ Database connection object created successfully.")
 # --- 🌍 CORS (ALLOW EVERYONE) ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # Allows ALL domains (Laptop, Phone, Public Internet)
+    allow_origins=["*"],   
     allow_credentials=True,
-    allow_methods=["*"],   # Allows ALL methods (GET, POST, DELETE, etc.)
-    allow_headers=["*"],   # Allows ALL headers
+    allow_methods=["*"],   
+    allow_headers=["*"],   
 )
 
 # --- SECURITY SETUP ---
@@ -104,11 +104,12 @@ async def add_car_with_upload(
     image: UploadFile = File(...)
 ):
     try:
+        # Save file to the uploads directory
         file_path = os.path.join(UPLOAD_DIR, image.filename)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(image.file, buffer)
         
-        # Use relative path or update domain dynamically in production
+        # Store relative path for consistent frontend prefixing
         image_url = f"/uploads/{image.filename}" 
         
         with engine.connect() as conn:
@@ -160,7 +161,6 @@ def get_cars(start_date: str = Query(None), end_date: str = Query(None)):
             return cars_list
     except Exception as e:
         print(f"❌ Error: {str(e)}")
-        # Return empty list instead of error object to prevent frontend crash
         return []
 
 @app.delete("/cars/{car_id}")
@@ -329,12 +329,11 @@ def delete_booking(booking_id: int):
         conn.commit()
         return {"message": "Deleted"}
 
-# --- 👮 ADMIN USER MANAGEMENT (BAN/DELETE) ---
+# --- 👮 ADMIN USER MANAGEMENT ---
 
 @app.get("/admin/users")
 def get_all_users():
     with engine.connect() as conn:
-        # Include is_banned column
         return conn.execute(text("SELECT id, full_name, email, is_banned, (password_hash = 'GOOGLE_AUTH_USER') as is_google_user FROM users ORDER BY id DESC")).mappings().all()
 
 @app.patch("/users/{user_id}/ban")
@@ -346,9 +345,6 @@ def toggle_user_ban(user_id: int, data: BanUpdate):
 
 @app.delete("/users/{user_id}")
 def delete_user(user_id: int):
-    """
-    Deletes user AND their booking history (Cascade)
-    """
     try:
         with engine.connect() as conn:
             conn.execute(text("DELETE FROM bookings WHERE user_id = :id"), {"id": user_id})
@@ -358,7 +354,7 @@ def delete_user(user_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# --- AUTH (UPDATED LOGIN) ---
+# --- AUTH ---
 
 @app.post("/google-login")
 def google_login(request: GoogleLoginRequest):
@@ -372,7 +368,6 @@ def google_login(request: GoogleLoginRequest):
             query = text("SELECT id, full_name, is_banned FROM users WHERE email = :email")
             existing_user = conn.execute(query, {"email": email}).fetchone()
             
-            # 🔴 CHECK IF BANNED
             if existing_user and existing_user.is_banned:
                 raise HTTPException(status_code=403, detail="Your account has been suspended by Admin.")
 
@@ -399,11 +394,9 @@ def signup(user: UserSignup):
 @app.post("/login")
 def login(user: UserLogin):
     with engine.connect() as conn:
-        # 🔴 Fetch is_banned status
         res = conn.execute(text("SELECT id, full_name, password_hash, is_banned FROM users WHERE email = :e"), {"e": user.email}).fetchone()
         
         if res and verify_password(user.password, res[2]):
-            # 🔴 BLOCK IF BANNED
             if res.is_banned:
                 raise HTTPException(status_code=403, detail="Your account has been suspended by Admin.")
                 

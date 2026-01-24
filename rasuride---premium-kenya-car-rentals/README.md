@@ -1,20 +1,32 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🚗 RasuRide - Premium Car Rental Platform
 
-# Run and deploy your AI Studio app
+RasuRide is a full-stack car rental application designed for the Kenyan market. It features a modern React frontend, a high-performance FastAPI backend, and a cloud-native infrastructure.
 
-This contains everything you need to run your app locally.
+## 🛠️ Technical Architecture
 
-View your app in AI Studio: https://ai.studio/apps/drive/1QpSbvGJ1nJCLCB1OMNwzVo39aru9kAPL
+### 1. Database Layer: **Neon**
+* **Provider**: Serverless PostgreSQL via Neon.
+* **Connectivity**: Integrated using SQLAlchemy with the `postgresql://` dialect for secure, cloud-persistent storage of user data, car inventory, and booking history.
 
-## Run Locally
+### 2. Identity & Security: **Google Cloud Auth**
+* **Integration**: OAuth 2.0 via Google Cloud Console.
+* **Access Control**: Secure "Continue with Google" login flow with built-in admin recognition for specified email addresses (e.g., djboziah@gmail.com).
 
-**Prerequisites:**  Node.js
+### 3. Backend API: **Render**
+* **Framework**: Python FastAPI.
+* **Static Assets**: Configured with absolute pathing to serve car images from the `/uploads` directory.
+* **Security**: CORS (Cross-Origin Resource Sharing) enabled to allow secure requests from the Vercel frontend.
 
+### 4. Frontend Hosting: **Vercel**
+* **Framework**: React + TypeScript + Tailwind CSS.
+* **Image Optimization**: Implemented a hardcoded API anchor to `https://rasuride.onrender.com` to ensure consistent image loading across all production and preview domains.
+* **CI/CD**: Automatic deployments triggered by GitHub pushes.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🚀 Deployment Workflow
+1.  **Code** is pushed to **GitHub**.
+2.  **Vercel** detects the push and rebuilds the frontend.
+3.  **Render** restarts the backend API.
+4.  **Neon** serves the persistent data to the API.
+
+## 📝 Authors
+* **Syphe IT Solutions** (Project Lead & Hybrid Cloud Architecture)
