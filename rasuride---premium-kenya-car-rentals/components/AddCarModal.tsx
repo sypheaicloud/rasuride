@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getApiUrl } from '../config';
+// import { getApiUrl } from '../config'; // Bypassing config
 
 interface AddCarModalProps { isOpen: boolean; onClose: () => void; onSuccess: () => void; }
 
 const AddCarModal: React.FC<AddCarModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const API_URL = "https://rasuride.onrender.com"; // Force Render
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
   const [plate, setPlate] = useState('');
@@ -25,7 +26,8 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ isOpen, onClose, onSuccess })
     const fd = new FormData();
     fd.append('make', make); fd.append('model', model); fd.append('license_plate', plate); fd.append('price_per_day', price); fd.append('image', imageFile!);
 
-    const res = await fetch(`${getApiUrl()}/cars/upload`, { method: 'POST', body: fd });
+    // UPDATED to use API_URL
+    const res = await fetch(`${API_URL}/cars/upload`, { method: 'POST', body: fd });
     if (res.ok) { 
         setMake(''); setModel(''); setPlate(''); setPrice(''); setImageFile(null);
         onSuccess(); onClose(); 

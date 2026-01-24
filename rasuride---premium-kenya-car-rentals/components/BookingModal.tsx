@@ -1,37 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Car } from '../types';
-import { getApiUrl } from '../config';
+// import { getApiUrl } from '../config'; // Bypassing config
 
 interface BookingModalProps {
   car: Car | null;
   onClose: () => void;
-  user?: any; // 👈 1. Added 'user' to the interface
+  user?: any; 
 }
 
 const BookingModal: React.FC<BookingModalProps> = ({ car, onClose, user }) => {
-  // 2. Initialize state using the passed 'user' prop
+  // --- FORCE BACKEND URL ---
+  const API_URL = "https://rasuride.onrender.com";
+
   const [currentUser, setCurrentUser] = useState<any>(user || null);
-  
-  // State for form inputs
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  // --- 3. ROBUST USER SYNC ---
   useEffect(() => {
-    // Priority A: Use the user passed from App.tsx
     if (user) {
       setCurrentUser(user);
       return;
     }
 
-    // Priority B: If no prop, try finding in LocalStorage (Fallback)
     const storedUser = localStorage.getItem('user') || localStorage.getItem('userInfo');
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
-        // Normalize the ID field
         const normalizedUser = {
              ...parsed,
              id: parsed.id || parsed.user_id 
@@ -41,11 +37,10 @@ const BookingModal: React.FC<BookingModalProps> = ({ car, onClose, user }) => {
         console.error("Login data corrupt:", err);
       }
     }
-  }, [user]); // Re-run if the 'user' prop changes
+  }, [user]);
 
   if (!car) return null;
 
-  // Price Calculation
   const calculateTotal = () => {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
@@ -63,7 +58,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ car, onClose, user }) => {
     setStatus('submitting');
 
     const bookingPayload = {
-      user_id: currentUser.user_id || currentUser.id, // Handle both ID formats
+      user_id: currentUser.user_id || currentUser.id,
       car_id: car.id,
       start_date: startDate,
       end_date: endDate,
@@ -74,7 +69,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ car, onClose, user }) => {
     };
 
     try {
-      const response = await fetch(`${getApiUrl()}/bookings`, {
+      // UPDATED: Using hardcoded API_URL
+      const response = await fetch(`${API_URL}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingPayload)
