@@ -1,5 +1,6 @@
 import React from 'react';
 import { Car } from '../types';
+import { getApiUrl } from '../config'; // Import your backend URL helper
 
 interface CarCardProps {
   car: Car;
@@ -8,8 +9,22 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
   
-  // Logic to handle missing images
-  const imageSource = car.image || car.image_url || "/range.png";
+  // 1. Get the Backend URL (https://rasuride.onrender.com)
+  const apiUrl = getApiUrl();
+
+  // 2. Logic to build the correct image link
+  const rawImage = car.image || car.image_url;
+  let imageSource = "/range.png"; // Default fallback if no image exists
+
+  if (rawImage) {
+    if (rawImage.startsWith("http")) {
+      // If it's already a full link (like from Google), use it as is
+      imageSource = rawImage;
+    } else {
+      // If it's a relative path (like /uploads/car.jpg), add the Backend URL to the front
+      imageSource = `${apiUrl}${rawImage}`;
+    }
+  }
 
   return (
     <div className="group bg-slate-900/50 rounded-3xl p-4 border border-slate-800 hover:border-amber-500/50 transition-all hover:shadow-2xl hover:shadow-amber-500/10 cursor-pointer overflow-hidden relative flex flex-col h-full">
@@ -21,6 +36,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
           alt={`${car.make} ${car.model}`}
           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
           onError={(e) => {
+            // If the image fails to load, replace it with a placeholder
             (e.target as HTMLImageElement).src = "https://placehold.co/600x400/1e293b/white?text=No+Image";
           }}
         />
@@ -49,7 +65,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
           </div>
         </div>
 
-        {/* ✅ CHANGED BUTTON: "Book Now" in Amber */}
+        {/* Book Now Button */}
         <button 
           onClick={() => onSelect(car)}
           className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 active:scale-95"
