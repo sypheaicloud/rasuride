@@ -29,7 +29,7 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
 
         {/* 2. Compact Headline */}
         <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-2 leading-none drop-shadow-xl">
-          Premium Car Rentals <span className="text-amber-500">Nairobi Kenya</span>
+          Premium Car Rentals <span className="text-amber-500">Nairobi Kenya v2</span>
         </h1>
 
         <p className="text-slate-300 text-xs md:text-sm max-w-xl mx-auto mb-6 font-medium drop-shadow-md">
