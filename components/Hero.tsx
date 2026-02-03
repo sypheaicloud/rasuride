@@ -12,15 +12,15 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   };
 
   return (
-    // 1. Height reduced to 350px so Fleet shows up immediately below
-    <div className="relative w-full h-[350px] flex items-center justify-center overflow-hidden bg-slate-950">
+    // 1. Increased height to 550px to show more of the background image
+    <div className="relative w-full h-[550px] flex items-center justify-center overflow-hidden bg-slate-950">
 
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-contain opacity-80"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent"></div>
       </div>
