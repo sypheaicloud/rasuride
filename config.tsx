@@ -1,12 +1,7 @@
-// src/config.ts
+// src/config.tsx
+
 export const getApiUrl = () => {
-  const hostname = window.location.hostname;
-
-  // If running locally on your computer...
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return 'http://127.0.0.1:8000';
-  }
-
-  // If running on phone or public internet...
-  return 'http://sypheaicloud.fortiddns.com:8000';
+  // 🚀 LIVE PRODUCTION MODE
+  // This connects your frontend (website) to your live Render backend.
+  return 'https://rasuride.onrender.com';
 };
