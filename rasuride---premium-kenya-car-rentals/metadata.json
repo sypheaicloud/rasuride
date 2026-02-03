@@ -1,0 +1,7 @@
+{
+  "name": "RasuRide - Premium Kenya Car Rentals",
+  "description": "A world-class car rental platform for RasuRide Kenya, featuring a premium dark-themed UI, AI-powered concierge, and seamless booking experience.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
