@@ -20,7 +20,7 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-contain opacity-80"
+          className="w-full h-full object-cover object-top opacity-80"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent"></div>
       </div>
