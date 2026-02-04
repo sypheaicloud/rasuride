@@ -106,24 +106,37 @@ async def add_car_with_upload(
     model: str = Form(...),
     price_per_day: int = Form(...),
     license_plate: str = Form(...),
-    image: UploadFile = File(...)
+    image: Optional[UploadFile] = File(None),
+    image_url_override: Optional[str] = Form(None)
 ):
     try:
-        file_path = os.path.join(UPLOAD_DIR, image.filename)
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(image.file, buffer)
-        
-        image_url = f"http://localhost:8000/uploads/{image.filename}"
+        final_image_url = ""
+
+        if image_url_override:
+            # Use the Vercel Blob URL provided by the frontend
+            final_image_url = image_url_override
+        elif image:
+            # Fallback for local upload
+            file_path = os.path.join(UPLOAD_DIR, image.filename)
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(image.file, buffer)
+            
+            # Use the current host instead of hardcoded localhost
+            # In production, this would be rasuride.onrender.com/uploads/...
+            final_image_url = f"/uploads/{image.filename}"
+        else:
+            raise HTTPException(status_code=400, detail="No image provided.")
         
         with engine.connect() as conn:
             query = text("""
                 INSERT INTO cars (make, model, license_plate, image_url, price_per_day, is_active)
                 VALUES (:make, :model, :plate, :image, :price, true)
             """)
-            conn.execute(query, {"make": make, "model": model, "plate": license_plate, "image": image_url, "price": price_per_day})
+            conn.execute(query, {"make": make, "model": model, "plate": license_plate, "image": final_image_url, "price": price_per_day})
             conn.commit()
             
-        return {"message": "Car added successfully!", "url": image_url}
+        return {"message": "Car added successfully!", "url": final_image_url}
+        
     except Exception as e:
         print(f"❌ Upload Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
