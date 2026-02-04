@@ -9,7 +9,7 @@ export default function Hero() {
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-cover object-[center_35%] opacity-65"
+          className="w-full h-full object-cover object-[center_35%] opacity-90 brightness-125 contrast-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
       </div>
