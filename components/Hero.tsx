@@ -35,9 +35,8 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
 
       <div className="relative z-10 container mx-auto px-4 text-center">
 
-        <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter mb-6 leading-none drop-shadow-2xl">
-          Premium Car Rentals <br />
-          <span className="text-amber-500">Nairobi Kenya</span>
+        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-6 leading-none drop-shadow-2xl">
+          Premium Car Rentals <span className="text-amber-500">Nairobi Kenya</span>
         </h1>
 
         <p className="text-slate-200 text-lg md:text-2xl max-w-3xl mx-auto mb-12 font-medium drop-shadow-lg">
