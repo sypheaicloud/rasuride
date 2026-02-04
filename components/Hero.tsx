@@ -2,16 +2,16 @@ import React from 'react';
 
 export default function Hero() {
   return (
-    <div className="relative w-full h-[350px] flex items-end justify-center overflow-hidden bg-slate-950 pb-4">
+    <div className="relative w-full h-[400px] flex items-end justify-center overflow-hidden bg-slate-950 pb-4">
 
-      {/* 1. Shrunken Background Image Area */}
+      {/* 1. Hero Mazda Image Area */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/Lexus120.png"
-          alt="Landing Page Background"
-          className="w-full h-full object-cover object-[center_35%] opacity-90 brightness-125 contrast-110"
+          src="/HeroMazda.jpg"
+          alt="Premium Mazda SUV"
+          className="w-full h-full object-cover object-[center_45%] opacity-90 brightness-110 contrast-115"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 text-center">
