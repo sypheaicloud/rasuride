@@ -12,7 +12,7 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   };
 
   return (
-    <div className="relative w-full h-[500px] flex items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative w-full h-[650px] md:h-[500px] flex items-center justify-center overflow-hidden bg-slate-950">
 
       {/* 1. Restored Background Image */}
       <div className="absolute inset-0 z-0">
