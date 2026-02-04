@@ -12,56 +12,60 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   };
 
   return (
-    <div className="relative w-full bg-slate-950 pt-12 pb-16 flex flex-col items-center overflow-hidden">
+    <div className="relative w-full h-[850px] flex items-center justify-center overflow-hidden bg-slate-950">
 
-      {/* 1. Widened Background GIF with Edge Blending */}
-      <div className="w-full max-w-7xl px-4 h-[350px] md:h-[500px] mb-8 relative group">
-        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-slate-950/20 via-transparent to-slate-950"></div>
+      {/* 1. Full-Width Background GIF with Professional Blending */}
+      <div className="absolute inset-0 z-0">
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-contain opacity-90 transition-all duration-700"
-          style={{
-            maskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)',
-            WebkitMaskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)'
-          }}
+          className="w-full h-full object-cover object-center opacity-70"
         />
-        {/* Ambient Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-amber-500/10 blur-[120px] -z-10 rounded-full"></div>
+
+        {/* The Blending Layers */}
+        {/* Layer 1: Dark Bottom Fade (Blends with page content) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+
+        {/* Layer 2: Side Fades (Makes it feel wider) */}
+        <div className="absolute inset-x-0 inset-y-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.8)_85%)]"></div>
+
+        {/* Layer 3: Extra Darkening for readability */}
+        <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 text-center">
+      <div className="relative z-10 container mx-auto px-4 text-center mt-32">
 
-        <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-4 leading-none">
-          Premium Car Rentals <span className="text-amber-500">Nairobi Kenya</span>
+        <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter mb-6 leading-none drop-shadow-2xl">
+          Premium Car Rentals <br />
+          <span className="text-amber-500">Nairobi Kenya</span>
         </h1>
 
-        <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto mb-10 font-medium">
-          Raglenn Enterprises: The ultimate comfort, style, and reliability.
+        <p className="text-slate-200 text-lg md:text-2xl max-w-3xl mx-auto mb-12 font-medium drop-shadow-lg">
+          Raglenn Enterprises: The ultimate comfort, style, and reliability for your journey.
         </p>
 
-        {/* 3. Search Bar (Now below the image) */}
-        <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 p-4 md:p-6 rounded-2xl max-w-4xl mx-auto flex flex-col md:flex-row gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        {/* 3. Search Bar (Centered and Floating) */}
+        <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 p-4 md:p-8 rounded-3xl max-w-5xl mx-auto flex flex-col md:flex-row gap-6 shadow-[0_25px_80px_rgba(0,0,0,0.6)]">
           <div className="flex-1 text-left">
-            <label className="block text-xs font-bold text-slate-400 uppercase ml-1 mb-2">Pick-up Date</label>
+            <label className="block text-xs font-bold text-amber-500 uppercase ml-2 mb-2 tracking-widest">Pick-up Date</label>
             <input
               type="date"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full bg-slate-950/80 border border-slate-700/50 rounded-2xl px-5 py-4 text-base text-white focus:outline-none focus:border-amber-500 transition-all hover:border-slate-500"
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
           <div className="flex-1 text-left">
-            <label className="block text-xs font-bold text-slate-400 uppercase ml-1 mb-2">Return Date</label>
+            <label className="block text-xs font-bold text-amber-500 uppercase ml-2 mb-2 tracking-widest">Return Date</label>
             <input
               type="date"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full bg-slate-950/80 border border-slate-700/50 rounded-2xl px-5 py-4 text-base text-white focus:outline-none focus:border-amber-500 transition-all hover:border-slate-500"
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
           <div className="flex items-end">
             <button
               onClick={handleSearch}
-              className="w-full md:w-auto px-10 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-wider rounded-xl transition-all shadow-lg active:scale-95 text-sm h-[48px]"
+              className="w-full md:w-auto px-12 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(245,158,11,0.3)] active:scale-95 text-base h-[60px]"
             >
               Search Fleet
             </button>
