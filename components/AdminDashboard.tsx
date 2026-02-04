@@ -66,7 +66,9 @@ const AdminDashboard: React.FC = () => {
     if (!window.confirm(`Are you sure you want to ${action}?`)) return;
 
     try {
-      const res = await fetch(`${getApiUrl()}/users/${userId}/admin`, {
+      const url = `${getApiUrl()}/users/${userId}/admin`;
+      console.log("DEBUG: Calling promote URL:", url);
+      const res = await fetch(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_admin: newStatus }),
