@@ -88,6 +88,9 @@ class StatusUpdate(BaseModel):
 class BanUpdate(BaseModel):
     is_banned: bool
 
+class AdminUpdate(BaseModel):
+    is_admin: bool
+
 # --- 🚀 CAR ENDPOINTS ---
 
 @app.post("/cars/upload")
@@ -327,8 +330,15 @@ def delete_booking(booking_id: int):
 @app.get("/admin/users")
 def get_all_users():
     with engine.connect() as conn:
-        # Include is_banned column
-        return conn.execute(text("SELECT id, full_name, email, is_banned, (password_hash = 'GOOGLE_AUTH_USER') as is_google_user FROM users ORDER BY id DESC")).mappings().all()
+        # Include is_banned and is_admin columns
+        return conn.execute(text("SELECT id, full_name, email, is_banned, is_admin, (password_hash = 'GOOGLE_AUTH_USER') as is_google_user FROM users ORDER BY id DESC")).mappings().all()
+
+@app.patch("/users/{user_id}/admin")
+def toggle_user_admin(user_id: int, data: AdminUpdate):
+    with engine.connect() as conn:
+        conn.execute(text("UPDATE users SET is_admin = :a WHERE id = :id"), {"a": data.is_admin, "id": user_id})
+        conn.commit()
+        return {"message": "User role updated"}
 
 @app.patch("/users/{user_id}/ban")
 def toggle_user_ban(user_id: int, data: BanUpdate):
@@ -362,7 +372,7 @@ def google_login(request: GoogleLoginRequest):
         name = google_data.get("name")
         is_admin = True if email == "djboziah@gmail.com" else False
         with engine.connect() as conn:
-            query = text("SELECT id, full_name, is_banned FROM users WHERE email = :email")
+            query = text("SELECT id, full_name, is_banned, is_admin FROM users WHERE email = :email")
             existing_user = conn.execute(query, {"email": email}).fetchone()
             
             # 🔴 CHECK IF BANNED
@@ -370,10 +380,12 @@ def google_login(request: GoogleLoginRequest):
                 raise HTTPException(status_code=403, detail="Your account has been suspended by Admin.")
 
             if existing_user:
-                return {"user_id": existing_user[0], "name": existing_user[1], "email": email, "is_admin": is_admin}
+                return {"user_id": existing_user[0], "name": existing_user[1], "email": email, "is_admin": existing_user.is_admin}
             else:
                 dummy_pwd = get_password_hash("GOOGLE_AUTH_USER")
-                res = conn.execute(text("INSERT INTO users (full_name, email, password_hash, is_banned) VALUES (:n, :e, :p, FALSE) RETURNING id"), {"n": name, "e": email, "p": dummy_pwd})
+                # Default is_admin based on email for the first time
+                is_admin = True if email == "djboziah@gmail.com" else False
+                res = conn.execute(text("INSERT INTO users (full_name, email, password_hash, is_banned, is_admin) VALUES (:n, :e, :p, FALSE, :a) RETURNING id"), {"n": name, "e": email, "p": dummy_pwd, "a": is_admin})
                 conn.commit()
                 return {"user_id": res.fetchone()[0], "name": name, "email": email, "is_admin": is_admin}
     except HTTPException as he:
@@ -385,20 +397,20 @@ def google_login(request: GoogleLoginRequest):
 def signup(user: UserSignup):
     with engine.connect() as conn:
         hashed_pw = get_password_hash(user.password)
-        conn.execute(text("INSERT INTO users (full_name, email, password_hash, is_banned) VALUES (:n, :e, :p, FALSE)"), {"n": user.full_name, "e": user.email, "p": hashed_pw})
+        conn.execute(text("INSERT INTO users (full_name, email, password_hash, is_banned, is_admin) VALUES (:n, :e, :p, FALSE, FALSE)"), {"n": user.full_name, "e": user.email, "p": hashed_pw})
         conn.commit()
         return {"message": "Success"}
 
 @app.post("/login")
 def login(user: UserLogin):
     with engine.connect() as conn:
-        # 🔴 Fetch is_banned status
-        res = conn.execute(text("SELECT id, full_name, password_hash, is_banned FROM users WHERE email = :e"), {"e": user.email}).fetchone()
+        # 🔴 Fetch is_banned and is_admin status
+        res = conn.execute(text("SELECT id, full_name, password_hash, is_banned, is_admin FROM users WHERE email = :e"), {"e": user.email}).fetchone()
         
         if res and verify_password(user.password, res[2]):
             # 🔴 BLOCK IF BANNED
             if res.is_banned:
                 raise HTTPException(status_code=403, detail="Your account has been suspended by Admin.")
                 
-            return {"user_id": res[0], "name": res[1], "email": user.email, "is_admin": (user.email == "djboziah@gmail.com")}
+            return {"user_id": res[0], "name": res[1], "email": user.email, "is_admin": res.is_admin}
         raise HTTPException(status_code=400, detail="Invalid credentials")
