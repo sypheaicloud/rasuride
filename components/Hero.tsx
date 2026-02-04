@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Hero() {
   return (
-    <div className="relative w-full h-[150px] md:h-[180px] flex items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative w-full h-[150px] md:h-[130px] flex items-end justify-center overflow-hidden bg-slate-950 pb-4">
 
       {/* 1. Hero Background Area */}
       <div className="absolute inset-0 z-0">
