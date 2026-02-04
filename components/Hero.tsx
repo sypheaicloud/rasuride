@@ -2,14 +2,14 @@ import React from 'react';
 
 export default function Hero() {
   return (
-    <div className="relative w-full h-[250px] flex items-end justify-center overflow-hidden bg-slate-950 pb-4">
+    <div className="relative w-full h-[320px] flex items-end justify-center overflow-hidden bg-slate-950 pb-4">
 
       {/* 1. Hero Mazda Image Area */}
       <div className="absolute inset-0 z-0">
         <img
           src="/HeroMazda.jpg"
           alt="Premium Mazda SUV"
-          className="w-full h-full object-cover object-[center_55%] opacity-90 brightness-110 contrast-115"
+          className="w-full h-full object-cover object-center opacity-90 brightness-110 contrast-115"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
       </div>
