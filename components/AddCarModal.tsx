@@ -28,7 +28,7 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ isOpen, onClose, onSuccess })
 
       // 1. Upload to Vercel Blob if we have a file and token
       if (imageFile) {
-        const token = import.meta.env.VITE_BLOB_READ_WRITE_TOKEN;
+        const token = (import.meta as any).env.VITE_BLOB_READ_WRITE_TOKEN;
         if (token) {
           try {
             // Dynmic import to avoid build issues if package is missing

@@ -5,12 +5,15 @@ export default function Hero() {
     <div className="relative w-full h-[400px] md:h-[600px] flex items-center justify-center overflow-hidden bg-slate-950">
 
       {/* 1. Hero Background Area */}
-      <div className="absolute inset-0 z-0">
+      <div className="relative w-full max-h-[70vh] overflow-hidden z-0">
+        {/* Changed absolute to relative and added a max height (70% of screen) */}
         <img
           src="/lexxy.png"
-          alt="Premium Lexus"
+          alt="Premium Mazda CX-5"
           className="w-full h-full object-cover object-center opacity-90 brightness-100"
         />
+
+        {/* Gradients */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/10 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-transparent to-transparent"></div>
       </div>
