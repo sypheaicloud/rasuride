@@ -15,7 +15,7 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 container mx-auto px-4 text-center">
-        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-4 leading-none drop-shadow-2xl">
+        <h1 className="text-xl md:text-2xl font-black text-white tracking-tighter mb-2 leading-none drop-shadow-2xl">
           Premium Car Rentals <span className="text-amber-500">Nairobi Kenya</span>
         </h1>
 
