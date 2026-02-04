@@ -7,7 +7,7 @@ export default function Hero() {
       {/* 1. Shrunken Background Image Area */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/Landingpageimg.gif"
+          src="/Lexus120.png"
           alt="Landing Page Background"
           className="w-full h-full object-cover object-[center_35%] opacity-90 brightness-125 contrast-110"
         />
