@@ -20,10 +20,17 @@ if not os.path.exists(UPLOAD_DIR):
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # --- DATABASE CONNECTION ---
-DATABASE_URL = "postgresql://postgres:password123@localhost:5432/rasuride_db"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password123@localhost:5432/rasuride_db")
 
 try:
     engine = create_engine(DATABASE_URL)
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE"))
+            conn.commit()
+            print("✅ Auto-migration: column added/checked")
+        except Exception as migration_error:
+            print(f"ℹ️ Migration info: {migration_error}")
     print("✅ Database connection object created successfully.")
 except Exception as e:
     print(f"❌ Error creating engine: {e}")
@@ -414,3 +421,7 @@ def login(user: UserLogin):
                 
             return {"user_id": res[0], "name": res[1], "email": user.email, "is_admin": res.is_admin}
         raise HTTPException(status_code=400, detail="Invalid credentials")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
