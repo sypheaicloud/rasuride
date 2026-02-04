@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Hero() {
   return (
-    <div className="relative w-full h-[350px] flex items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative w-full h-[350px] flex items-end justify-center overflow-hidden bg-slate-950 pb-12">
 
       {/* 1. Shrunken Background Image Area */}
       <div className="absolute inset-0 z-0">
