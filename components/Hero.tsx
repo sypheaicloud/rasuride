@@ -12,14 +12,14 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   };
 
   return (
-    <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative w-full h-[350px] flex items-end justify-center overflow-hidden bg-slate-950 pb-8">
 
       {/* 1. Shrunken Background Image Area */}
       <div className="absolute inset-0 z-0">
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-cover object-[center_65%] opacity-65"
+          className="w-full h-full object-cover object-[center_45%] opacity-65"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
       </div>
@@ -31,7 +31,7 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
         </h1>
 
         {/* 3. SHRUNKEN SEARCH BAR */}
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 p-2 md:p-4 rounded-xl max-w-2xl mx-auto flex flex-col md:flex-row gap-2 shadow-2xl mb-4">
+        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 p-2 md:p-3 rounded-xl max-w-2xl mx-auto flex flex-col md:flex-row gap-2 shadow-2xl mb-3">
           <div className="flex-1 text-left">
             <label className="block text-[10px] font-bold text-amber-500 uppercase ml-2 mb-0.5 tracking-widest">Pick-up</label>
             <input
