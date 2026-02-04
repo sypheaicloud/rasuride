@@ -12,7 +12,7 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   };
 
   return (
-    <div className="relative w-full h-[550px] flex items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden bg-slate-950">
 
       {/* 1. Balanced Background GIF (Sky Hidden) */}
       <div className="absolute inset-0 z-0">
