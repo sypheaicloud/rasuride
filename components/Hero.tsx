@@ -12,57 +12,54 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   };
 
   return (
-    <div className="relative w-full h-[500px] flex items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative w-full h-[400px] flex items-center justify-center overflow-hidden bg-slate-950">
 
-      {/* 1. Restored Background Image */}
+      {/* 1. Shrunken Background Image Area */}
       <div className="absolute inset-0 z-0">
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-cover object-center opacity-70"
+          className="w-full h-full object-cover object-[center_65%] opacity-65"
         />
-
-        {/* Simple gradients that won't hide the car */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-slate-950/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 text-center">
 
-        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-6 leading-none drop-shadow-2xl">
+        <h1 className="text-xl md:text-2xl font-black text-white tracking-tighter mb-4 leading-none drop-shadow-2xl">
           Premium Car Rentals <span className="text-amber-500">Nairobi Kenya</span>
         </h1>
 
-        {/* 3. Search Bar (Centered and Floating) */}
-        <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 p-4 md:p-8 rounded-3xl max-w-5xl mx-auto flex flex-col md:flex-row gap-6 shadow-[0_25px_80px_rgba(0,0,0,0.6)] mb-8">
+        {/* 3. SHRUNKEN SEARCH BAR */}
+        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 p-2 md:p-4 rounded-xl max-w-2xl mx-auto flex flex-col md:flex-row gap-2 shadow-2xl mb-4">
           <div className="flex-1 text-left">
-            <label className="block text-xs font-bold text-amber-500 uppercase ml-2 mb-2 tracking-widest">Pick-up Date</label>
+            <label className="block text-[10px] font-bold text-amber-500 uppercase ml-2 mb-0.5 tracking-widest">Pick-up</label>
             <input
               type="date"
-              className="w-full bg-slate-950/80 border border-slate-700/50 rounded-2xl px-5 py-4 text-base text-white focus:outline-none focus:border-amber-500 transition-all hover:border-slate-500"
+              className="w-full bg-slate-950/80 border border-slate-700/50 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 transition-all"
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
           <div className="flex-1 text-left">
-            <label className="block text-xs font-bold text-amber-500 uppercase ml-2 mb-2 tracking-widest">Return Date</label>
+            <label className="block text-[10px] font-bold text-amber-500 uppercase ml-2 mb-0.5 tracking-widest">Return</label>
             <input
               type="date"
-              className="w-full bg-slate-950/80 border border-slate-700/50 rounded-2xl px-5 py-4 text-base text-white focus:outline-none focus:border-amber-500 transition-all hover:border-slate-500"
+              className="w-full bg-slate-950/80 border border-slate-700/50 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 transition-all"
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
           <div className="flex items-end">
             <button
               onClick={handleSearch}
-              className="w-full md:w-auto px-12 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-widest rounded-2xl transition-all shadow-[0_0_30px_rgba(245,158,11,0.3)] active:scale-95 text-base h-[60px]"
+              className="w-full md:w-auto px-5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-widest rounded-lg transition-all shadow-lg active:scale-95 text-[10px] md:text-xs h-[30px]"
             >
-              Search Fleet
+              Search
             </button>
           </div>
         </div>
 
-        <p className="text-slate-200 text-base md:text-xl max-w-3xl mx-auto mb-6 font-medium drop-shadow-lg">
-          Raglenn Enterprises: The ultimate comfort, style, and reliability for your journey.
+        <p className="text-slate-300 text-[10px] md:text-xs max-w-xl mx-auto font-medium drop-shadow-md opacity-80">
+          Raglenn Enterprises: Comfort, style, and reliability.
         </p>
       </div>
     </div>
