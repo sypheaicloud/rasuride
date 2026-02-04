@@ -3,8 +3,8 @@ import { getApiUrl } from '../config';
 import AddCarModal from './AddCarModal';
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'bookings' | 'users' | 'fleet'>('users'); 
-  
+  const [activeTab, setActiveTab] = useState<'bookings' | 'users' | 'fleet'>('users');
+
   const [bookings, setBookings] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [cars, setCars] = useState<any[]>([]);
@@ -30,14 +30,14 @@ const AdminDashboard: React.FC = () => {
 
       const res = await fetch(`${getApiUrl()}${path}`);
       const data = await res.json();
-      
+
       if (activeTab === 'bookings') setBookings(data);
       else if (activeTab === 'users') setUsers(data);
       else setCars(data);
-    } catch (err) { 
-      console.error("Fetch error:", err); 
-    } finally { 
-      setLoading(false); 
+    } catch (err) {
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,13 +79,13 @@ const AdminDashboard: React.FC = () => {
 
   // 4. CAR STATUS (Updated to 'At Shop')
   const handleToggleStatus = async (id: number, currentStatus: boolean) => {
-    try { 
-        await fetch(`${getApiUrl()}/cars/${id}/status`, { 
-            method: 'PATCH', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ is_active: !currentStatus }) 
-        }); 
-        fetchData(); 
+    try {
+      await fetch(`${getApiUrl()}/cars/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !currentStatus })
+      });
+      fetchData();
     } catch (e) { alert("Error"); }
   };
 
@@ -97,13 +97,13 @@ const AdminDashboard: React.FC = () => {
 
   const savePrice = async (id: number) => {
     try {
-        await fetch(`${getApiUrl()}/cars/${id}/price`, { 
-            method: 'PATCH', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ new_price: parseInt(tempPrice.toString()) }) 
-        }); 
-        setEditingId(null);
-        fetchData();
+      await fetch(`${getApiUrl()}/cars/${id}/price`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ new_price: parseInt(tempPrice.toString()) })
+      });
+      setEditingId(null);
+      fetchData();
     } catch (e) { alert("Error saving price"); }
   };
 
@@ -117,7 +117,7 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-10 pb-20">
       <div className="max-w-7xl mx-auto">
-        
+
         <header className="mb-10 flex justify-between items-end">
           <div>
             <h1 className="text-4xl font-black text-white tracking-tight">Control <span className="text-amber-500">Center</span></h1>
@@ -137,7 +137,7 @@ const AdminDashboard: React.FC = () => {
             <h3 className="text-3xl font-black text-white">{stats.active_cars} / {stats.total_cars}</h3>
           </div>
         </div>
-        
+
         {/* TABS */}
         <div className="flex gap-2 mb-8 bg-slate-900/50 p-1.5 rounded-2xl w-fit border border-white/5">
           {['fleet', 'bookings', 'users'].map((tab: any) => (
@@ -162,15 +162,15 @@ const AdminDashboard: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {cars.map((car: any) => (
                       <div key={car.id} className={`group relative bg-slate-950 rounded-2xl border transition-all ${car.active ? 'border-white/5' : 'border-red-500/30 opacity-70'}`}>
-                        
+
                         {/* DELETE BTN */}
                         <button onClick={() => handleDeleteCar(car.id)} className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition-all">🗑️</button>
-                        
+
                         {/* IMAGE */}
                         <div className="relative h-36 overflow-hidden rounded-t-2xl bg-black">
-                          <img src={car.image && car.image.startsWith('/uploads') ? `${getApiUrl()}${car.image}` : (car.image || '/range.png')} className={`w-full h-full object-cover transition-opacity ${car.active ? 'opacity-100' : 'opacity-40 grayscale'}`} alt={car.model} />
+                          <img src={car.image && car.image.startsWith('/uploads') ? `${getApiUrl()}${car.image}` : (car.image || '/hero_luxury_car.png')} className={`w-full h-full object-cover transition-opacity ${car.active ? 'opacity-100' : 'opacity-40 grayscale'}`} alt={car.model} />
                         </div>
-                        
+
                         {/* CONTENT */}
                         <div className="p-4">
                           <div className="mb-3">
@@ -179,29 +179,29 @@ const AdminDashboard: React.FC = () => {
                           </div>
 
                           <div className="flex flex-col gap-2 border-t border-white/5 pt-3">
-                            
+
                             {/* 1. STATUS BUTTON (FIXED: AT SHOP) */}
                             <button onClick={() => handleToggleStatus(car.id, car.active)} className={`w-full text-[10px] font-black px-3 py-2 rounded-lg border flex items-center justify-center gap-2 transition-all ${car.active ? 'bg-green-500/10 border-green-500/30 text-green-500' : 'bg-slate-700/50 border-slate-600 text-slate-400'}`}>
-                                {car.active ? '● ONLINE' : '○ AT SHOP'}
+                              {car.active ? '● ONLINE' : '○ AT SHOP'}
                             </button>
 
                             {/* 2. PRICE EDITING (RESTORED) */}
                             {editingId === car.id ? (
-                                <div className="flex gap-1 items-center bg-slate-800 p-1 rounded-lg">
-                                    <input 
-                                        type="number" 
-                                        value={tempPrice} 
-                                        onChange={(e) => setTempPrice(e.target.value)}
-                                        className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-amber-500"
-                                    />
-                                    <button onClick={() => savePrice(car.id)} className="text-green-500 hover:bg-green-500/20 p-1 rounded">✓</button>
-                                    <button onClick={() => setEditingId(null)} className="text-red-500 hover:bg-red-500/20 p-1 rounded">✕</button>
-                                </div>
+                              <div className="flex gap-1 items-center bg-slate-800 p-1 rounded-lg">
+                                <input
+                                  type="number"
+                                  value={tempPrice}
+                                  onChange={(e) => setTempPrice(e.target.value)}
+                                  className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-amber-500"
+                                />
+                                <button onClick={() => savePrice(car.id)} className="text-green-500 hover:bg-green-500/20 p-1 rounded">✓</button>
+                                <button onClick={() => setEditingId(null)} className="text-red-500 hover:bg-red-500/20 p-1 rounded">✕</button>
+                              </div>
                             ) : (
-                                <button onClick={() => startEditing(car)} className="group/edit flex justify-center items-center w-full py-1 text-slate-400 hover:text-white text-[10px] uppercase font-bold transition-colors">
-                                    <span className="mr-2">KES {car.price?.toLocaleString()}</span>
-                                    <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity">✎</span>
-                                </button>
+                              <button onClick={() => startEditing(car)} className="group/edit flex justify-center items-center w-full py-1 text-slate-400 hover:text-white text-[10px] uppercase font-bold transition-colors">
+                                <span className="mr-2">KES {car.price?.toLocaleString()}</span>
+                                <span className="opacity-0 group-hover/edit:opacity-100 transition-opacity">✎</span>
+                              </button>
                             )}
 
                           </div>
@@ -259,7 +259,7 @@ const AdminDashboard: React.FC = () => {
                           </td>
                           <td className="p-4 text-right flex justify-end gap-2">
                             <button onClick={() => handleBanUser(u.id, u.is_banned)} className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase border transition-all ${u.is_banned ? 'border-green-500/30 text-green-500 hover:bg-green-500 hover:text-white' : 'border-yellow-500/30 text-yellow-500 hover:bg-yellow-500 hover:text-black'}`}>
-                                {u.is_banned ? "UNBAN" : "BAN"}
+                              {u.is_banned ? "UNBAN" : "BAN"}
                             </button>
                             <button onClick={() => handleDeleteUser(u.id)} className="px-3 py-1.5 rounded text-[10px] font-bold uppercase border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all">DELETE</button>
                           </td>

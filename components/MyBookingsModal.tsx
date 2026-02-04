@@ -4,14 +4,14 @@ import { getApiUrl } from '../config'; // 👈 IMPORT THIS!
 interface MyBookingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userId?: number; 
+  userId?: number;
 }
 
 const MyBookingsModal: React.FC<MyBookingsModalProps> = ({ isOpen, onClose, userId }) => {
   const [myBookings, setMyBookings] = useState<any[]>([]);
-  
+
   // Default to User ID 1 for testing if no one is logged in
-  const activeUserId = userId || 1; 
+  const activeUserId = userId || 1;
 
   // Function to load data (we use this on load AND after deleting)
   const fetchMyBookings = () => {
@@ -58,10 +58,10 @@ const MyBookingsModal: React.FC<MyBookingsModalProps> = ({ isOpen, onClose, user
   return (
     // 1. The Overlay
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm">
-      
+
       {/* 2. The Modal Box */}
       <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-3xl shadow-2xl relative flex flex-col max-h-[85vh]">
-        
+
         {/* Header */}
         <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900 rounded-t-3xl">
           <h2 className="text-2xl font-bold text-white">My <span className="text-amber-500">History</span></h2>
@@ -77,34 +77,40 @@ const MyBookingsModal: React.FC<MyBookingsModalProps> = ({ isOpen, onClose, user
           ) : (
             myBookings.map((booking: any) => (
               <div key={booking.id} className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex gap-4 hover:border-amber-500/30 transition-colors group relative">
-                
+
                 {/* Tiny Car Image */}
                 <div className="w-24 h-16 bg-black rounded-lg overflow-hidden shrink-0">
-                   <img src={booking.image_url || '/range.png'} className="w-full h-full object-cover" alt="Car" />
+                  <img
+                    src={booking.image_url && booking.image_url.startsWith('/uploads')
+                      ? `${getApiUrl()}${booking.image_url}`
+                      : (booking.image_url || '/hero_luxury_car.png')}
+                    className="w-full h-full object-cover"
+                    alt="Car"
+                  />
                 </div>
-                
+
                 {/* Info */}
                 <div className="flex-grow">
-                   <h3 className="font-bold text-white">{booking.make} {booking.model}</h3>
-                   <div className="text-xs text-slate-400 mt-1 flex gap-2">
-                     <span>📅 {booking.start_date}</span>
-                     <span>➜</span>
-                     <span>{booking.end_date}</span>
-                   </div>
+                  <h3 className="font-bold text-white">{booking.make} {booking.model}</h3>
+                  <div className="text-xs text-slate-400 mt-1 flex gap-2">
+                    <span>📅 {booking.start_date}</span>
+                    <span>➜</span>
+                    <span>{booking.end_date}</span>
+                  </div>
                 </div>
 
                 {/* Price & Status */}
                 <div className="text-right flex flex-col justify-center">
-                   <span className="font-bold text-amber-500">${booking.total_price}</span>
-                   <span className="text-[10px] uppercase font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded mt-1 mb-2">{booking.status}</span>
-                   
-                   {/* 🔴 CANCEL BUTTON */}
-                   <button 
-                     onClick={() => handleCancel(booking.id)}
-                     className="text-xs text-red-500 hover:text-white hover:bg-red-500 px-2 py-1 rounded border border-red-500/20 transition-all"
-                   >
-                     Cancel
-                   </button>
+                  <span className="font-bold text-amber-500">${booking.total_price}</span>
+                  <span className="text-[10px] uppercase font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded mt-1 mb-2">{booking.status}</span>
+
+                  {/* 🔴 CANCEL BUTTON */}
+                  <button
+                    onClick={() => handleCancel(booking.id)}
+                    className="text-xs text-red-500 hover:text-white hover:bg-red-500 px-2 py-1 rounded border border-red-500/20 transition-all"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             ))
