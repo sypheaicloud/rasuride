@@ -39,12 +39,8 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
           Premium Car Rentals <span className="text-amber-500">Nairobi Kenya</span>
         </h1>
 
-        <p className="text-slate-200 text-lg md:text-2xl max-w-3xl mx-auto mb-12 font-medium drop-shadow-lg">
-          Raglenn Enterprises: The ultimate comfort, style, and reliability for your journey.
-        </p>
-
         {/* 3. Search Bar (Centered and Floating) */}
-        <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 p-4 md:p-8 rounded-3xl max-w-5xl mx-auto flex flex-col md:flex-row gap-6 shadow-[0_25px_80px_rgba(0,0,0,0.6)]">
+        <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 p-4 md:p-8 rounded-3xl max-w-5xl mx-auto flex flex-col md:flex-row gap-6 shadow-[0_25px_80px_rgba(0,0,0,0.6)] mb-8">
           <div className="flex-1 text-left">
             <label className="block text-xs font-bold text-amber-500 uppercase ml-2 mb-2 tracking-widest">Pick-up Date</label>
             <input
@@ -70,6 +66,10 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
             </button>
           </div>
         </div>
+
+        <p className="text-slate-200 text-base md:text-xl max-w-3xl mx-auto mb-6 font-medium drop-shadow-lg">
+          Raglenn Enterprises: The ultimate comfort, style, and reliability for your journey.
+        </p>
       </div>
     </div>
   );
