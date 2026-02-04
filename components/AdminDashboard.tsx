@@ -74,9 +74,13 @@ const AdminDashboard: React.FC = () => {
       if (res.ok) {
         fetchData();
       } else {
-        alert("Failed to update user role. Your backend may need updating.");
+        const errorData = await res.json().catch(() => ({ detail: "Unknown error" }));
+        alert(`Failed to update user role: ${errorData.detail || res.statusText}`);
       }
-    } catch (e) { alert("Action failed"); }
+    } catch (e) {
+      console.error("Action error:", e);
+      alert("Action failed. Check your connection.");
+    }
   };
 
   // 2. DELETE USER PERMANENTLY
