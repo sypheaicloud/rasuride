@@ -22,15 +22,62 @@ const AddCarModal: React.FC<AddCarModalProps> = ({ isOpen, onClose, onSuccess })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const fd = new FormData();
-    fd.append('make', make); fd.append('model', model); fd.append('license_plate', plate); fd.append('price_per_day', price); fd.append('image', imageFile!);
 
-    const res = await fetch(`${getApiUrl()}/cars/upload`, { method: 'POST', body: fd });
-    if (res.ok) { 
+    try {
+      let finalImageUrl = "";
+
+      // 1. Upload to Vercel Blob if we have a file and token
+      if (imageFile) {
+        const token = import.meta.env.VITE_BLOB_READ_WRITE_TOKEN;
+        if (token) {
+          try {
+            // Dynmic import to avoid build issues if package is missing
+            const { put } = await import('@vercel/blob');
+            const blob = await put(`cars/${Date.now()}-${imageFile.name}`, imageFile, {
+              access: 'public',
+              token: token
+            });
+            finalImageUrl = blob.url;
+            console.log("✅ Image saved to Vercel Blob:", finalImageUrl);
+          } catch (blobErr) {
+            console.error("❌ Vercel Blob upload failed, falling back to local:", blobErr);
+          }
+        }
+      }
+
+      // 2. Prepare Form Data for Backend
+      const fd = new FormData();
+      fd.append('make', make);
+      fd.append('model', model);
+      fd.append('license_plate', plate);
+      fd.append('price_per_day', price);
+
+      if (finalImageUrl) {
+        // If we have a Vercel URL, send it as a string
+        fd.append('image_url_override', finalImageUrl);
+      } else if (imageFile) {
+        // Fallback: send the raw file to the backend
+        fd.append('image', imageFile);
+      }
+
+      const res = await fetch(`${getApiUrl()}/cars/upload`, {
+        method: 'POST',
+        body: fd
+      });
+
+      if (res.ok) {
         setMake(''); setModel(''); setPlate(''); setPrice(''); setImageFile(null);
-        onSuccess(); onClose(); 
+        onSuccess(); onClose();
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert(`Failed to add car: ${errData.detail || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Something went wrong while uploading.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (!isOpen) return null;
