@@ -12,19 +12,19 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   };
 
   return (
-    <div className="relative w-full h-[850px] flex items-center justify-center overflow-hidden bg-slate-950">
+    <div className="relative w-full h-[550px] flex items-center justify-center overflow-hidden bg-slate-950">
 
-      {/* 1. Full-Width Background GIF with Professional Blending */}
+      {/* 1. Balanced Background GIF (Sky Hidden) */}
       <div className="absolute inset-0 z-0">
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-cover object-center opacity-70"
+          className="w-full h-full object-cover object-bottom opacity-70"
         />
 
         {/* The Blending Layers */}
         {/* Layer 1: Dark Bottom Fade (Blends with page content) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
 
         {/* Layer 2: Side Fades (Makes it feel wider) */}
         <div className="absolute inset-x-0 inset-y-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.8)_85%)]"></div>
@@ -33,7 +33,7 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
         <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 text-center mt-32">
+      <div className="relative z-10 container mx-auto px-4 text-center">
 
         <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter mb-6 leading-none drop-shadow-2xl">
           Premium Car Rentals <br />
