@@ -14,15 +14,20 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   return (
     <div className="relative w-full bg-slate-950 pt-12 pb-16 flex flex-col items-center overflow-hidden">
 
-      {/* 1. Shrinked Background GIF at the Top */}
-      <div className="w-full max-w-5xl px-4 h-[300px] md:h-[400px] mb-12 relative">
+      {/* 1. Widened Background GIF with Edge Blending */}
+      <div className="w-full max-w-7xl px-4 h-[350px] md:h-[500px] mb-8 relative group">
+        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-slate-950/20 via-transparent to-slate-950"></div>
         <img
           src="/Landingpageimg.gif"
           alt="Landing Page Background"
-          className="w-full h-full object-contain opacity-90 rounded-3xl"
+          className="w-full h-full object-contain opacity-90 transition-all duration-700"
+          style={{
+            maskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)'
+          }}
         />
-        {/* Subtle glow effect behind the image */}
-        <div className="absolute inset-0 bg-amber-500/5 blur-[100px] -z-10 rounded-full"></div>
+        {/* Ambient Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-amber-500/10 blur-[120px] -z-10 rounded-full"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 text-center">
