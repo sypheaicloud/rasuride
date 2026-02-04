@@ -22,6 +22,16 @@ function App() {
   const [isMyBookingsOpen, setIsMyBookingsOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
 
+  // --- SEARCH STATE ---
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const handleSearch = () => {
+    if (startDate && endDate) {
+      fetchCars(startDate, endDate);
+    }
+  };
+
   // --- 1. RESTORE SESSION (The Fix) ---
   useEffect(() => {
     // Check if user data exists in browser storage
@@ -105,9 +115,37 @@ function App() {
         onOpenAdmin={() => setShowAdmin(true)}
       />
 
-      <Hero onSearch={fetchCars} />
+      <Hero />
 
-      <div className="container mx-auto px-8 md:px-16 lg:px-24 py-8" id="fleet">
+      <div className="container mx-auto px-8 md:px-16 lg:px-24 pt-12 pb-4" id="fleet">
+        {/* SHRUNKEN SEARCH BAR - NOW HERE */}
+        <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 p-2 md:p-3 rounded-xl max-w-2xl mr-auto ml-0 mb-12 flex flex-col md:flex-row gap-2 shadow-xl">
+          <div className="flex-1 text-left">
+            <label className="block text-[10px] font-bold text-slate-500 uppercase ml-2 mb-0.5 tracking-widest">Pick-up</label>
+            <input
+              type="date"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 transition-all"
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div className="flex-1 text-left">
+            <label className="block text-[10px] font-bold text-slate-500 uppercase ml-2 mb-0.5 tracking-widest">Return</label>
+            <input
+              type="date"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 transition-all"
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+          <div className="flex items-end">
+            <button
+              onClick={handleSearch}
+              className="w-full md:w-auto px-6 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-widest rounded-lg transition-all shadow-lg active:scale-95 text-[10px] h-[30px]"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+
         <div className="flex items-end justify-between mb-8">
           <div>
             <h2 className="text-4xl font-black text-white tracking-tight">
