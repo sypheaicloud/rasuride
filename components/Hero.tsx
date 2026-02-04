@@ -4,13 +4,23 @@ export default function Hero() {
   return (
     <div className="relative w-full h-[200px] flex items-end justify-center overflow-hidden bg-slate-950 pb-2">
 
-      {/* 1. Hero Mazda Image Area */}
+      {/* 1. Hero Background Area (Video with Image Fallback) */}
       <div className="absolute inset-0 z-0">
-        <img
-          src="/HeroMazda.jpg"
-          alt="Premium Mazda SUV"
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
           className="w-full h-full object-cover object-[center_45%] opacity-90 brightness-110 contrast-115"
-        />
+          poster="/HeroMazda.jpg"
+        >
+          <source src="/hero-bg.mp4" type="video/mp4" />
+          <img
+            src="/HeroMazda.jpg"
+            alt="Premium Mazda SUV"
+            className="w-full h-full object-cover"
+          />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
       </div>
 
