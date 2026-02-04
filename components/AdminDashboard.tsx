@@ -59,6 +59,26 @@ const AdminDashboard: React.FC = () => {
     } catch (e) { alert("Action failed"); }
   };
 
+  // 1.5 TOGGLE ADMIN STATUS
+  const handleToggleAdmin = async (userId: number, currentAdminStatus: boolean) => {
+    const newStatus = !currentAdminStatus;
+    const action = newStatus ? "PROMOTE to Admin" : "DEMOTE to regular user";
+    if (!window.confirm(`Are you sure you want to ${action}?`)) return;
+
+    try {
+      const res = await fetch(`${getApiUrl()}/users/${userId}/admin`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_admin: newStatus }),
+      });
+      if (res.ok) {
+        fetchData();
+      } else {
+        alert("Failed to update user role. Your backend may need updating.");
+      }
+    } catch (e) { alert("Action failed"); }
+  };
+
   // 2. DELETE USER PERMANENTLY
   const handleDeleteUser = async (userId: number) => {
     if (!window.confirm("⚠️ DANGER: This will delete the user AND ALL THEIR BOOKING HISTORY.\n\nContinue?")) return;
@@ -255,9 +275,15 @@ const AdminDashboard: React.FC = () => {
                           </td>
                           <td className="p-4 text-slate-400">{u.email}</td>
                           <td className="p-4">
-                            {u.is_banned ? <span className="bg-red-600/20 text-red-500 px-2 py-1 rounded text-[10px] font-bold uppercase border border-red-500/20">⛔ BANNED</span> : <span className="bg-green-500/20 text-green-500 px-2 py-1 rounded text-[10px] font-bold uppercase border border-green-500/20">✔ ACTIVE</span>}
+                            <div className="flex flex-col gap-1">
+                              {u.is_banned ? <span className="w-fit bg-red-600/20 text-red-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-red-500/20">⛔ BANNED</span> : <span className="w-fit bg-green-500/20 text-green-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-green-500/20">✔ ACTIVE</span>}
+                              {u.is_admin && <span className="w-fit bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-amber-500/20">⭐ ADMIN</span>}
+                            </div>
                           </td>
                           <td className="p-4 text-right flex justify-end gap-2">
+                            <button onClick={() => handleToggleAdmin(u.id, u.is_admin)} className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase border transition-all ${u.is_admin ? 'border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white' : 'border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-slate-900'}`}>
+                              {u.is_admin ? "Demote" : "Make Admin"}
+                            </button>
                             <button onClick={() => handleBanUser(u.id, u.is_banned)} className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase border transition-all ${u.is_banned ? 'border-green-500/30 text-green-500 hover:bg-green-500 hover:text-white' : 'border-yellow-500/30 text-yellow-500 hover:bg-yellow-500 hover:text-black'}`}>
                               {u.is_banned ? "UNBAN" : "BAN"}
                             </button>

@@ -56,7 +56,7 @@ export default function Navbar({ user, onLogout, onOpenAuth, onOpenBookings, onO
                 </div>
                 <div className="flex items-center gap-4">
                   <button onClick={onOpenBookings} className="hidden md:block text-sm font-bold text-slate-300 hover:text-white transition-colors">My Bookings</button>
-                  {user.is_admin && (
+                  {(user.is_admin === true || user.is_admin === 1 || user.is_admin === "true") && (
                     <button onClick={onOpenAdmin} className="p-2 text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 rounded-lg transition-all" title="Admin Dashboard">⚡</button>
                   )}
                   <button onClick={onLogout} className="hidden md:block px-4 py-2 text-xs font-bold text-red-500 border border-red-500/30 rounded-lg hover:bg-red-500 hover:text-white transition-all">Logout</button>

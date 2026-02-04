@@ -15,4 +15,5 @@ export interface User {
   user_id: number;
   name: string;
   email: string;
+  is_admin: boolean;
 }
