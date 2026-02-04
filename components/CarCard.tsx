@@ -1,5 +1,6 @@
 import React from 'react';
 import { Car } from '../types';
+import { getApiUrl } from '../config';
 
 interface CarCardProps {
   car: Car;
@@ -7,17 +8,19 @@ interface CarCardProps {
 }
 
 const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
-  
-  // Logic to handle missing images
-  const imageSource = car.image || car.image_url || "/range.png";
+
+  // Logic to handle missing images and relative backend paths
+  const imageSource = car.image && car.image.startsWith('/uploads')
+    ? `${getApiUrl()}${car.image}`
+    : (car.image || car.image_url || "/hero_luxury_car.png");
 
   return (
     <div className="group bg-slate-900/50 rounded-3xl p-4 border border-slate-800 hover:border-amber-500/50 transition-all hover:shadow-2xl hover:shadow-amber-500/10 cursor-pointer overflow-hidden relative flex flex-col h-full">
-      
+
       {/* Image Container */}
       <div className="h-48 mb-4 rounded-2xl overflow-hidden relative bg-slate-950">
-        <img 
-          src={imageSource} 
+        <img
+          src={imageSource}
           alt={`${car.make} ${car.model}`}
           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
           onError={(e) => {
@@ -38,7 +41,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
           <h3 className="text-xl font-bold text-white">
             {car.make} <span className="text-slate-400 font-normal">{car.model}</span>
           </h3>
-          
+
           <div className="flex items-center space-x-2 mt-2">
             <span className="px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-[10px] font-bold uppercase tracking-wider text-slate-400">
               {car.category}
@@ -50,7 +53,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, onSelect }) => {
         </div>
 
         {/* ✅ CHANGED BUTTON: "Book Now" in Amber */}
-        <button 
+        <button
           onClick={() => onSelect(car)}
           className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 active:scale-95"
         >
