@@ -340,12 +340,20 @@ def get_all_users():
         # Include is_banned and is_admin columns
         return conn.execute(text("SELECT id, full_name, email, is_banned, is_admin, (password_hash = 'GOOGLE_AUTH_USER') as is_google_user FROM users ORDER BY id DESC")).mappings().all()
 
+
 @app.patch("/users/{user_id}/admin")
 def toggle_user_admin(user_id: int, data: AdminUpdate):
-    with engine.connect() as conn:
-        conn.execute(text("UPDATE users SET is_admin = :a WHERE id = :id"), {"a": data.is_admin, "id": user_id})
-        conn.commit()
-        return {"message": "User role updated"}
+    print(f"DEBUG: Toggling admin for user {user_id} to {data.is_admin}")
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("UPDATE users SET is_admin = :a WHERE id = :id"), {"a": data.is_admin, "id": user_id})
+            conn.commit()
+            print(f"DEBUG: Successfully updated user {user_id}")
+            return {"message": "User role updated"}
+    except Exception as e:
+        print(f"DEBUG: Error updating user: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.patch("/users/{user_id}/ban")
 def toggle_user_ban(user_id: int, data: BanUpdate):
