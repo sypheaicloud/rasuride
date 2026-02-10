@@ -4,12 +4,12 @@ export default function Hero() {
   return (
     <div className="relative w-full h-[320px] flex items-end justify-center overflow-hidden bg-slate-950 pb-4">
 
-      {/* 1. Hero Mazda Image Area */}
+      {/* 1. Hero Animated Background Area */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/HeroMazda.jpg"
-          alt="Premium Mazda SUV"
-          className="w-full h-full object-cover object-center opacity-90 brightness-110 contrast-115"
+          src="/Landingpa111geimg.gif"
+          alt="Premium Car Landing"
+          className="w-full h-full object-cover object-center opacity-90"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
       </div>
@@ -20,7 +20,7 @@ export default function Hero() {
         </h1>
 
         <p className="text-slate-300 text-sm md:text-lg max-w-xl mx-auto font-medium drop-shadow-md opacity-80">
-          Raglenn Enterprises: Comfort, style, and reliability.
+          CAR HIRE KENYA: Comfort, style, and reliability.
         </p>
       </div>
     </div>

@@ -18,11 +18,10 @@ export default function Navbar({ user, onLogout, onOpenAuth, onOpenBookings, onO
         {/* 1. LOGO & BRANDING */}
         <div className="flex items-center gap-3 cursor-pointer py-2" onClick={() => window.scrollTo(0, 0)}>
           <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center font-black text-slate-900 text-xl shadow-lg shadow-amber-500/20">
-            R
+            C
           </div>
           <div className="flex flex-col justify-center">
-            <h1 className="text-lg font-black text-white leading-none tracking-tight">Raglenn</h1>
-            <h1 className="text-lg font-black text-white leading-none tracking-tight">Enterprises</h1>
+            <h1 className="text-lg font-black text-white leading-none tracking-tight">CAR HIRE KENYA</h1>
           </div>
         </div>
 

@@ -14,48 +14,48 @@ export default function Hero({ onSearch }: { onSearch: (start: string, end: stri
   return (
     // 1. Height reduced to 350px so Fleet shows up immediately below
     <div className="relative w-full h-[350px] flex items-center justify-center overflow-hidden bg-slate-950">
-      
-      {/* Background */}
+
+      {/* Animated Background */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop" 
-          alt="Luxury Car Background" 
-          className="w-full h-full object-cover opacity-30" 
+        <img
+          src="/Landingpa111geimg.gif"
+          alt="Premium Car Landing"
+          className="w-full h-full object-cover object-center opacity-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 text-center">
-        
+
         {/* 2. Compact Headline */}
         <h1 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-2 leading-none drop-shadow-xl">
           Premium Car Rentals <span className="text-amber-500">Nairobi Kenya</span>
         </h1>
 
         <p className="text-slate-300 text-xs md:text-sm max-w-xl mx-auto mb-6 font-medium drop-shadow-md">
-          Raglenn Enterprises: The ultimate comfort, style, and reliability.
+          CAR HIRE KENYA: The ultimate comfort, style, and reliability.
         </p>
 
         {/* 3. Slim Search Bar */}
         <div className="bg-slate-900/90 backdrop-blur-md border border-white/10 p-2 rounded-xl max-w-3xl mx-auto flex flex-col md:flex-row gap-2 shadow-2xl">
           <div className="flex-1 text-left">
             <label className="block text-[10px] font-bold text-slate-400 uppercase ml-1 mb-0.5">Pick-up</label>
-            <input 
-              type="date" 
+            <input
+              type="date"
               className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
           <div className="flex-1 text-left">
             <label className="block text-[10px] font-bold text-slate-400 uppercase ml-1 mb-0.5">Return</label>
-            <input 
-              type="date" 
+            <input
+              type="date"
               className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
           <div className="flex items-end">
-            <button 
+            <button
               onClick={handleSearch}
               className="w-full md:w-auto px-6 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black uppercase tracking-wider rounded-lg transition-all shadow-lg active:scale-95 text-[10px] md:text-xs h-[34px]"
             >
