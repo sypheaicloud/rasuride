@@ -6,11 +6,15 @@ export default function Hero() {
 
       {/* 1. Hero Animated Background Area */}
       <div className="absolute inset-0 z-0">
-        <img
-          src="/Landingpa111geimg.gif"
-          alt="Premium Car Landing"
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
           className="w-full h-full object-cover object-center opacity-90"
-        />
+        >
+          <source src="/heromainvid.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
       </div>
 
